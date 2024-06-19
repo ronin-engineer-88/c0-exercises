@@ -1,4 +1,4 @@
-package homework;
+package _03_Operators_Conditions.homework;
 
 public class exercise_1 {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package _03_2;
+package _03_Operators_Conditions._03_2;
 
 public class example_2_5 {
     // Toán tử ba ngôi

@@ -1,4 +1,4 @@
-package _03_1;
+package _03_Operators_Conditions._03_1;
 
 public class example_1_9 {
     // Toán tử thao tác với bit

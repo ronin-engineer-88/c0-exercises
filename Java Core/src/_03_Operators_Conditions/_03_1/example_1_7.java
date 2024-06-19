@@ -1,4 +1,4 @@
-package _03_1;
+package _03_Operators_Conditions._03_1;
 
 public class example_1_7 {
     // Toán tử ép kiểu

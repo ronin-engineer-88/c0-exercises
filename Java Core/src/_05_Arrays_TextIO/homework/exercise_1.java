@@ -4,7 +4,7 @@ public class exercise_1 {
     public static void main(String[] args) {
         int[] array = {1, 2, 3, 4, 5, 6};  // Khởi tạo mảng
 
-        int sum = 0; // khoiwt tạo biến lưu tổng giá trị
+        int sum = 0; // khởi tạo biến lưu tổng giá trị
         for (int number : array) {
             sum += number;
         }

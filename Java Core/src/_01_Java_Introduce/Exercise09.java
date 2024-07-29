@@ -1,6 +1,6 @@
 package _01_Java_Introduce;
 
-public class Exercise9 {
+public class Exercise09 {
     public static void main(String[] args) {
     /*
         Xâ dựng công thức:

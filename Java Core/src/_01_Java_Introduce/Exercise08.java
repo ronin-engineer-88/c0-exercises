@@ -1,6 +1,6 @@
 package _01_Java_Introduce;
 
-public class Exercise8 {
+public class Exercise08 {
     public static void main(String[] args) {
 
         System.out.println("Vận động viên chạy 24 dặm trong 1 giờ 40 phút và 35 giây");

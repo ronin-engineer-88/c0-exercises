@@ -1,8 +1,8 @@
-package _06_Algorithm1_BigO_and_Sorting;
+package _06_Algorithm_Big_O_Sorting_Algorithms;
 
 import java.util.Scanner;
 
-public class Exercise08 {
+public class exercise_8 {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 

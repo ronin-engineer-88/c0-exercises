@@ -19,8 +19,14 @@ public class exercise_4 {
 
     private static int findx(int[] arr, int k) {
         Arrays.sort(arr);
-        if(arr[k] > arr[k-1])
-            return arr[k-1];
+
+        if(k == 0){
+            if(arr[0] > 1)
+                return 1;
+        } else if (k <= arr.length){
+            if(k == arr.length || arr[k] != arr[k-1])
+                return arr[k-1];
+        }
 
         return -1;
     }

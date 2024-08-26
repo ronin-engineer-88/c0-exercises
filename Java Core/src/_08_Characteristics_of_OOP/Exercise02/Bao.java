@@ -1,6 +1,6 @@
 package _08_Characteristics_of_OOP.Exercise02;
 
-public class Bao extends TaiLieu{
+public class Bao extends TaiLieu {
     private String dateRelease;
 
     public Bao(int id, String publisher, int copies, String dateRelease) {

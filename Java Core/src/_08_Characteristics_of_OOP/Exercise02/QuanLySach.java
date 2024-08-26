@@ -6,7 +6,7 @@ public class QuanLySach {
     private int size;
 
     public QuanLySach() {
-        this.capacity = 1024;
+        this.capacity = 5;
         this.size = 0;
         listTaiLieu = new TaiLieu[capacity];
     }
@@ -39,10 +39,14 @@ public class QuanLySach {
         return null;
     }
 
-    public void hienThiThongTinTaiLieu(){
-        for (int i = 0; i < size; i++) {
-            listTaiLieu[i].displayInfo();
-            System.out.println("----------------------");
+    public void hienThiThongTinTaiLieu() {
+        if (size == 0) {
+            System.out.println("Empty!");
+        } else {
+            for (int i = 0; i < size; i++) {
+                listTaiLieu[i].displayInfo();
+                System.out.println("----------------------");
+            }
         }
     }
 
@@ -61,4 +65,27 @@ public class QuanLySach {
         }
     }
 
+    public TaiLieu[] getListTaiLieu() {
+        return listTaiLieu;
+    }
+
+    public void setListTaiLieu(TaiLieu[] listTaiLieu) {
+        this.listTaiLieu = listTaiLieu;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
 }

@@ -1,4 +1,4 @@
-package _07_Characteristics_of_OOP.homework.models;
+package _07_Overview_of_OOP.homework.models;
 
 public class Housekeeper extends Employee {
     private static final double BASE_SALARY = 200;

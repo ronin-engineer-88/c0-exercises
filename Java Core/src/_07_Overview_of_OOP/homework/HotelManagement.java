@@ -1,8 +1,8 @@
-package _07_Characteristics_of_OOP.homework;
+package _07_Overview_of_OOP.homework;
 
-import _07_Characteristics_of_OOP.homework.models.Housekeeper;
-import _07_Characteristics_of_OOP.homework.models.Receptionist;
-import _07_Characteristics_of_OOP.homework.models.Room;
+import _07_Overview_of_OOP.homework.models.Housekeeper;
+import _07_Overview_of_OOP.homework.models.Receptionist;
+import _07_Overview_of_OOP.homework.models.Room;
 
 public class HotelManagement {
     public static void main(String[] args) {

@@ -1,6 +1,6 @@
-package _07_Characteristics_of_OOP.homework.models;
+package _07_Overview_of_OOP.homework.models;
 
-import _07_Characteristics_of_OOP.homework.interfaces.IEmployeeInCharge;
+import _07_Overview_of_OOP.homework.interfaces.IEmployeeInCharge;
 
 import java.util.ArrayList;
 import java.util.List;

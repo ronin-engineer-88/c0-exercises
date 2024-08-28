@@ -6,7 +6,7 @@ public class QuanLySach {
     private int size;
 
     public QuanLySach() {
-        this.capacity = 5;
+        this.capacity = 1024;
         this.size = 0;
         listTaiLieu = new TaiLieu[capacity];
     }
@@ -61,6 +61,8 @@ public class QuanLySach {
             } else if (type.equalsIgnoreCase("bao") && listTaiLieu[i] instanceof Bao) {
                 listTaiLieu[i].displayInfo();
                 System.out.println("----------------------");
+            } else {
+                System.out.println("Không tìm thấy loại tài liệu phù hợp!");
             }
         }
     }

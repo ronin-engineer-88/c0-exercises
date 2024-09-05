@@ -1,6 +1,6 @@
-package _09_Exception.homework;
+package _10_Exception.homework;
 
-public class _01 {
+public class exercise_1 {
     public static void main(String[] args) {
         try {
             m(15);

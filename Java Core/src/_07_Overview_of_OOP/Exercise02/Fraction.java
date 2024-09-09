@@ -5,7 +5,6 @@ import static _05_Arrays_TextIO.homework.exercise_7.gcd;
 public class Fraction {
     private int numerator;
     private int denominator;
-
     private boolean isValid;
 
     public Fraction(int numerator, int denominator){
@@ -110,6 +109,7 @@ public class Fraction {
 
         return gcd(denominator, numerator%denominator);
     }
+
 
     public int getNumerator() {
         return numerator;

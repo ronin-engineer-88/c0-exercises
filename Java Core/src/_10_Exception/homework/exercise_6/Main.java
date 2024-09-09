@@ -1,5 +1,6 @@
 package _10_Exception.homework.exercise_6;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -19,6 +20,9 @@ public class Main {
                 flag = false;
                 System.out.println(e.getMessage());
                 System.out.print("Nhập lại: ");
+            } catch (InputMismatchException ex) {
+                scanner.next();
+                System.out.print("Vui lòng nhập số nguyên: ");
             }
         }
 
@@ -26,11 +30,16 @@ public class Main {
     }
 
     private static int positiveIntegerInput(Scanner scanner) throws NegativeNumberException {
-        int n = scanner.nextInt();
-        if(n <= 0){
-            throw new NegativeNumberException("Số bạn nhập phải là số dương!");
+        try {
+            int n = scanner.nextInt();
+            if(n <= 0){
+                throw new NumberFormatException("Số bạn nhập phải là số dương!");
+            }
+            return n;
+
+        } catch (NumberFormatException ex){
+            throw new NegativeNumberException("Lỗi: " + ex.getMessage());
         }
 
-        return n;
     }
 }

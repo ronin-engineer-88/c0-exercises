@@ -1,4 +1,4 @@
-package _09_ClassDesign_and_WrapperClass.Inheritance;
+package _09_ClassDesign_and_WrapperClass;
 
 public class StringBuilderExample {
     public static void main(String[] args) {

@@ -7,6 +7,7 @@ public class exercise_2 {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Nhap so phan tu cua mang: "); int n = scanner.nextInt();
 
+
         int[] arr = new int[n];
         System.out.print("Nhap cac phan tu cua mang: ");
         for(int i = 0; i < n; i++){
@@ -18,6 +19,7 @@ public class exercise_2 {
         for(int i = 0; i < n; i++){
             System.out.print(arr[i] + " ");
         }
+
     }
 
     private static void customizeSorted(int[] arr) {

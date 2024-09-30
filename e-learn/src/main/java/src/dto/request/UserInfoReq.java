@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
+import java.sql.Timestamp;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -17,9 +19,17 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
-public class UserLoginReq {
+public class UserInfoReq {
 
     private String username;
 
     private String password;
+
+    private String name;
+
+    private Timestamp createdDate;
+
+    private Timestamp updatedDate;
+
+    private String status;
 }

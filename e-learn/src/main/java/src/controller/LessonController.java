@@ -2,10 +2,10 @@ package src.controller;
 
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
-import src.dto.request.LessonCreateReq;
-import src.dto.request.LessonSearchReq;
-import src.dto.request.LessonUpdateReq;
-import src.dto.response.LessonSearchRes;
+import src.dto.request.admin.LessonCreateReq;
+import src.dto.request.admin.LessonSearchReq;
+import src.dto.request.admin.LessonUpdateReq;
+import src.dto.response.admin.LessonSearchRes;
 
 import java.util.List;
 

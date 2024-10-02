@@ -1,4 +1,4 @@
-package src.dto.request;
+package src.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -16,19 +16,10 @@ import lombok.experimental.SuperBuilder;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CourseSearchReq {
 
-    private String name;
+public class UserLoginReq {
 
-    private String status;
+    private String username;
 
-    private String teacherName;
-
-    private String createdDateFrom;
-
-    private String createdDateTo;
-
-    private String ratingFrom;
-
-    private String ratingTo;
+    private String password;
 }

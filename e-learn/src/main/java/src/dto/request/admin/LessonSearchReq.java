@@ -1,4 +1,4 @@
-package src.dto.response;
+package src.dto.request.admin;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ChapterSearchRes {
+public class LessonSearchReq {
 
     private String name;
 
@@ -24,13 +24,11 @@ public class ChapterSearchRes {
 
     private Long courseId;
 
+    private Long chapterId;
+
+    private String type;
+
     private String createdDateFrom;
 
     private String createdDateTo;
-
-    private String sort;
-
-    private int page;
-
-    private int pageSize;
 }

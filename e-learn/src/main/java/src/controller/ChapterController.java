@@ -2,10 +2,10 @@ package src.controller;
 
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
-import src.dto.request.ChapterCreateReq;
-import src.dto.request.ChapterSearchReq;
-import src.dto.request.ChapterUpdateReq;
-import src.dto.response.ChapterSearchRes;
+import src.dto.request.admin.ChapterCreateReq;
+import src.dto.request.admin.ChapterSearchReq;
+import src.dto.request.admin.ChapterUpdateReq;
+import src.dto.response.admin.ChapterSearchRes;
 
 import java.util.List;
 

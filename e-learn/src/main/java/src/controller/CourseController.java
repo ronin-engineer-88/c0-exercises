@@ -2,10 +2,10 @@ package src.controller;
 
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
-import src.dto.request.CourseCreateReq;
-import src.dto.request.CourseSearchReq;
-import src.dto.request.CourseUpdateReq;
-import src.dto.response.CourseSearchRes;
+import src.dto.request.admin.CourseCreateReq;
+import src.dto.request.admin.CourseSearchReq;
+import src.dto.request.admin.CourseUpdateReq;
+import src.dto.response.admin.CourseSearchRes;
 
 @RestController
 @RequestMapping(UrlConstant.API_V1)

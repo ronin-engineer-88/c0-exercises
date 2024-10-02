@@ -1,4 +1,4 @@
-package src.dto.request;
+package src.dto.request.admin;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -16,5 +16,16 @@ import lombok.experimental.SuperBuilder;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ChapterUpdateReq {
+public class TeacherUpdateReq {
+
+    private String name;
+
+    private String email;
+
+    private String phoneNumber;
+
+    private String address;
+
+    private String status;
+
 }

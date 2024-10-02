@@ -22,6 +22,9 @@ public class Chapter extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "order_num")
+    private Integer orderNumber;
+
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 

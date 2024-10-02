@@ -2,9 +2,9 @@ package src.controller;
 
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
-import src.dto.request.UserLoginReq;
-import src.dto.request.UserSearchReq;
-import src.dto.response.UserSearchRes;
+import src.dto.request.user.UserLoginReq;
+import src.dto.request.user.UserSearchReq;
+import src.dto.response.admin.UserSearchRes;
 
 @RestController
 @RequestMapping(UrlConstant.API_V1)

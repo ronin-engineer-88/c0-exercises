@@ -1,4 +1,4 @@
-package src.dto.response;
+package src.dto.response.admin;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,13 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TeacherSearchRes {
-
-    private String username;
+public class LessonSearchRes {
 
     private String name;
 
     private String status;
+
+    private Long courseId;
+
+    private Long chapterId;
+
+    private String type;
 
     private String createdDateFrom;
 
@@ -34,5 +37,4 @@ public class TeacherSearchRes {
     private int page;
 
     private int pageSize;
-
 }

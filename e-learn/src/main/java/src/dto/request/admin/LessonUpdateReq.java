@@ -1,4 +1,4 @@
-package src.dto.request;
+package src.dto.request.admin;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -9,12 +9,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@SuperBuilder
-@Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CourseUpdateReq {
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Data
+//@SuperBuilder
+//@Accessors(chain = true)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public class LessonUpdateReq {
+
 }

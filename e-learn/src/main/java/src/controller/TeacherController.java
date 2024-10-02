@@ -2,32 +2,34 @@ package src.controller;
 
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
-import src.dto.request.UserLoginReq;
-import src.dto.request.UserSearchReq;
-import src.dto.response.UserSearchRes;
+import src.dto.request.TeacherSearchReq;
+import src.dto.request.TeacherUpdateReq;
+import src.dto.response.TeacherSearchRes;
 
 @RestController
 @RequestMapping()
-public class UserController {
+public class TeacherController {
 
-    @PostMapping(UrlConstant.USER_LOGIN)
-    public Object login(@RequestBody UserLoginReq req) {
+    @PutMapping(UrlConstant.UPDATE_TEACHERS)
+    public Object updateTeacher(@PathVariable("teacher_id") Long teacherId,
+                                           @RequestBody TeacherUpdateReq req) {
+
         return req;
     }
 
-    @DeleteMapping(UrlConstant.DELETE_USERS)
-    public Object softDeleteUser(@PathVariable("user_id") Long userId) {
-        return userId;
+    @DeleteMapping(UrlConstant.DELETE_TEACHERS)
+    public Object deleteTeacher(@PathVariable("teacher_id") Long teacherId) {
+        return teacherId;
     }
 
-    @GetMapping(UrlConstant.GET_USERS)
-    public Object getUsers(
+    @GetMapping(UrlConstant.GET_TEACHERS)
+    public Object getTeachers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "created_date") String sort,
-            @RequestBody UserSearchReq req) {
+            @RequestBody TeacherSearchReq req) {
 
-        UserSearchRes res = new UserSearchRes();
+        TeacherSearchRes res = new TeacherSearchRes();
         res.setSort(sort);
         res.setPage(page);
         res.setPageSize(pageSize);
@@ -40,3 +42,4 @@ public class UserController {
         return res;
     }
 }
+

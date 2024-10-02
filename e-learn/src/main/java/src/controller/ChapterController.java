@@ -10,7 +10,7 @@ import src.dto.response.ChapterSearchRes;
 import java.util.List;
 
 @RestController
-@RequestMapping()
+@RequestMapping(UrlConstant.API_V1)
 public class ChapterController {
 
     @PostMapping(UrlConstant.ADD_CHAPTERS)

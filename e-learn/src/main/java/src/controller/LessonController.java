@@ -10,7 +10,7 @@ import src.dto.response.LessonSearchRes;
 import java.util.List;
 
 @RestController
-@RequestMapping()
+@RequestMapping(UrlConstant.API_V1)
 public class LessonController {
 
     @PostMapping(UrlConstant.ADD_LESSONS)

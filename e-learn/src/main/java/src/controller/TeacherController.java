@@ -7,7 +7,7 @@ import src.dto.request.TeacherUpdateReq;
 import src.dto.response.TeacherSearchRes;
 
 @RestController
-@RequestMapping()
+@RequestMapping(UrlConstant.API_V1)
 public class TeacherController {
 
     @PutMapping(UrlConstant.UPDATE_TEACHERS)

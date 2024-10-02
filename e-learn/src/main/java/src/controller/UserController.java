@@ -7,7 +7,7 @@ import src.dto.request.UserSearchReq;
 import src.dto.response.UserSearchRes;
 
 @RestController
-@RequestMapping()
+@RequestMapping(UrlConstant.API_V1)
 public class UserController {
 
     @PostMapping(UrlConstant.USER_LOGIN)

@@ -8,7 +8,7 @@ import src.dto.request.CourseUpdateReq;
 import src.dto.response.CourseSearchRes;
 
 @RestController
-@RequestMapping()
+@RequestMapping(UrlConstant.API_V1)
 public class CourseController {
 
     @PostMapping(UrlConstant.ADD_COURSES)

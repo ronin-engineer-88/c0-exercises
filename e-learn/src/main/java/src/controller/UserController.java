@@ -6,7 +6,7 @@ import src.dto.request.*;
 import src.dto.response.*;
 
 @RestController
-@RequestMapping("/api/v1/users/")
+@RequestMapping(UrlConstant.API_V1)
 public class UserController {
 
     /**
@@ -40,7 +40,7 @@ public class UserController {
      * @param req Thông tin người dùng cần cập nhật
      * @return Thông tin người dùng sau khi cập nhật
      */
-    @PutMapping("{user_id}")
+    @PutMapping(UrlConstant.UPDATE_USER)
     public Object userUpdate(@PathVariable("user_id") int userId,
                              @RequestBody UserInfoReq req) {
         UserUpdateRes res = new UserUpdateRes();
@@ -62,7 +62,7 @@ public class UserController {
      * @param userId ID của người dùng cần xóa
      * @return ID của người dùng đã xóa
      */
-    @DeleteMapping("{user_id}")
+    @DeleteMapping(UrlConstant.DELETE_USER)
     public Object remove(@PathVariable("user_id") int userId) {
         return userId;
     }
@@ -75,7 +75,7 @@ public class UserController {
      * @param courseId ID của khóa học cần đăng ký
      * @return Thông tin về việc đăng ký khóa học
      */
-    @PostMapping("{user_id}" + UrlConstant.USER_ENROLL_COURSE)
+    @PostMapping(UrlConstant.USER_ENROLL_COURSE)
     public Object enroll(@PathVariable("user_id") int userId,
                          @PathVariable("course_id") int courseId) {
 
@@ -95,7 +95,7 @@ public class UserController {
      * @param rate Điểm đánh giá của người dùng
      * @return Thông tin về đánh giá của người dùng
      */
-    @PostMapping("{user_id}" + UrlConstant.USER_RATE_COURSE)
+    @PostMapping(UrlConstant.USER_RATE_COURSE)
     public Object rateCourse(@PathVariable("user_id") int userId,
                              @PathVariable("course_id") int courseId,
                              @RequestBody int rate) {
@@ -118,7 +118,7 @@ public class UserController {
      * @param review Nội dung nhận xét
      * @return Thông tin về nhận xét của người dùng
      */
-    @PostMapping("{user_id}" + UrlConstant.USER_REVIEW_COURSE)
+    @PostMapping(UrlConstant.USER_REVIEW_COURSE)
     public Object commentCourse(@PathVariable("user_id") int userId,
                                 @PathVariable("course_id") int courseId,
                                 @RequestBody String review) {

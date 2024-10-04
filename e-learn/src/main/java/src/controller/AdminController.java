@@ -5,7 +5,7 @@ import src.constant.UrlConstant;
 import src.dto.request.UserLoginReq;
 
 @RestController
-@RequestMapping("/api/v1/admins/")
+@RequestMapping(UrlConstant.API_V1 + "/admins")
 public class AdminController {
 
     /**

@@ -10,6 +10,8 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -25,9 +27,9 @@ public class TeacherSearchRes {
 
     private String status;
 
-    private String createdDateFrom;
+    private Date createdDateFrom;
 
-    private String createdDateTo;
+    private Date createdDateTo;
 
     private String sort;
 

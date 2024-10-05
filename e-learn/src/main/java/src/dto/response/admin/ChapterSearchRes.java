@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -24,9 +26,9 @@ public class ChapterSearchRes {
 
     private Long courseId;
 
-    private String createdDateFrom;
+    private Date createdDateFrom;
 
-    private String createdDateTo;
+    private Date createdDateTo;
 
     private String sort;
 

@@ -1,4 +1,5 @@
-package src.dto.request.admin;
+package src.dto.response.user;
+
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -9,8 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Date;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -18,19 +17,13 @@ import java.util.Date;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CourseSearchReq {
 
-    private String name;
+public class UserStudyRes {
+
+    private int userId;
+
+    private int courseId;
 
     private String status;
 
-    private String teacherName;
-
-    private Date createdDateFrom;
-
-    private Date createdDateTo;
-
-    private String ratingFrom;
-
-    private String ratingTo;
 }

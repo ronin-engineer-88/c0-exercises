@@ -1,4 +1,4 @@
-package src.dto.request.admin;
+package src.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -18,19 +18,18 @@ import java.util.Date;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CourseSearchReq {
+
+public class UserInfoReq {
+
+    private String username;
+
+    private String password;
 
     private String name;
 
     private String status;
 
-    private String teacherName;
+    private Date createdDate;
 
-    private Date createdDateFrom;
-
-    private Date createdDateTo;
-
-    private String ratingFrom;
-
-    private String ratingTo;
+    private Date updatedDate;
 }

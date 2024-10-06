@@ -25,10 +25,13 @@ public class Lesson extends BaseEntity {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "type")
+    private String type;
+
     @Column(name = "url")
     private String url;
 
-    @Column(name = "order_num")
+    @Column(name = "`order`")
     private Integer order;
 
     @Column(name = "created_date")

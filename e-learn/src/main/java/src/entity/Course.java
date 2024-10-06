@@ -26,7 +26,7 @@ public class Course extends BaseEntity {
     private String status;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<UserCourse> userCourses;
+    private List<StudentCourse> studentCourses;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Chapter> chapters;

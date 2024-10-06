@@ -51,8 +51,5 @@ public class ChapterController {
 
         return res;
     }
-
-
-
 }
 

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Admin extends BaseEntity {
 
-    @Column(name = "user_name")
+    @Column(name = "username")
     private String username;
 
     @Column(name = "password")

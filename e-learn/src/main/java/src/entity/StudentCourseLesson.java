@@ -9,32 +9,30 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "chapter")
+@Table(name = "student_course_lesson")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Chapter extends BaseEntity {
-
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "description")
-    private String description;
+public class StudentCourseLesson extends BaseEntity {
 
     @Column(name = "status")
     private String status;
 
-    @Column(name = "`order`")
-    private Integer order;
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "user_course_user_id", referencedColumnName = "student_id"),
+            @JoinColumn(name = "user_course_course_id", referencedColumnName = "course_id")
+    })
+    private StudentCourse studentCourse;
+
+    @ManyToOne
+    @JoinColumn(name = "lesson_id")
+    private Lesson lessonId;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
-
-    @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
 }

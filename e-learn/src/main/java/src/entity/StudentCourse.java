@@ -9,12 +9,12 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_course")
+@Table(name = "student_course")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCourse extends BaseEntity {
+public class StudentCourse extends BaseEntity {
 
     @Column(name = "rating")
     private Integer rating;
@@ -32,8 +32,8 @@ public class UserCourse extends BaseEntity {
     private LocalDateTime updatedDate;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "student_id")
+    private Student student;
 
     @ManyToOne
     @JoinColumn(name = "course_id")

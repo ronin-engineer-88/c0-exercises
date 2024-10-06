@@ -10,24 +10,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "student")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends BaseEntity {
-
-    @Column(name = "user_name")
-    private String username;
+public class Student extends BaseEntity {
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "password")
-    private String password;
-
     @Column(name = "status")
     private String status;
+
+    @Column(name = "age")
+    private Integer age;
+
+    @Column(name = "username")
+    private String username;
+
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
@@ -35,6 +38,6 @@ public class User extends BaseEntity {
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserCourse> userCourses;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<StudentCourse> studentCourses;
 }

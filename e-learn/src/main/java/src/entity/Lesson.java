@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "lesson")
@@ -43,4 +44,7 @@ public class Lesson extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "chapter_id", nullable = false)
     private Chapter chapter;
+
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
+    private List<StudentCourseLesson> studentCourseLessons;
 }

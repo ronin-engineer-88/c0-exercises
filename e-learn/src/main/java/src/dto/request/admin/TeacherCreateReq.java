@@ -18,8 +18,7 @@ import lombok.experimental.SuperBuilder;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TeacherUpdateReq {
-
+public class TeacherCreateReq {
     @NotBlank(message = "Name must not be blank.")
     @Size(max = 50, message = "Name must not exceed 50 characters.")
     private String name;

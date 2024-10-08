@@ -32,7 +32,7 @@ public class ChapterController {
      */
     @PostMapping(UrlConstant.ADD_CHAPTERS)
     public ResponseEntity<?> addChapters(@PathVariable("course_id") Long courseId,
-                                         @RequestBody List<ChapterCreateReq> req) {
+                                         @Valid @RequestBody List<ChapterCreateReq> req) {
         List<Chapter> createdChapters = chapterService.addChapters(courseId, req);
         return ResponseEntity.ok(createdChapters);
     }
@@ -50,7 +50,7 @@ public class ChapterController {
     @PutMapping(UrlConstant.UPDATE_CHAPTERS)
     public ResponseEntity<?> updateChapter(@PathVariable("course_id") Long courseId,
                                            @PathVariable("chapter_id") Long chapterId,
-                                           @RequestBody ChapterUpdateReq req) {
+                                           @Valid @RequestBody ChapterUpdateReq req) {
         Chapter updatedChapter = chapterService.updateChapter(courseId, chapterId, req);
         return ResponseEntity.ok(updatedChapter);
     }

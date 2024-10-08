@@ -3,6 +3,7 @@ package src.dto.request.admin;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class ChapterSearchReq {
 
     private String status;
 
+    @Min(value = 1, message = "Course ID must be a positive number.")
     private Long courseId;
 
     private Date createdDateFrom;

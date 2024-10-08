@@ -1,12 +1,10 @@
 package src.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "chapter")
@@ -14,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Chapter extends BaseEntity {
 
     @Column(name = "name")
@@ -37,4 +36,7 @@ public class Chapter extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
+    private List<Lesson> lessons;
 }

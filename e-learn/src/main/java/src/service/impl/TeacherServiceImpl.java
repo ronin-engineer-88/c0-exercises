@@ -1,15 +1,20 @@
 package src.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import src.dto.request.admin.TeacherCreateReq;
 import src.dto.request.admin.TeacherSearchReq;
 import src.dto.request.admin.TeacherUpdateReq;
 import src.dto.response.admin.TeacherSearchRes;
 import src.entity.Teacher;
+import src.repository.TeacherRepository;
 import src.service.ITeacherService;
 
 @Service
 public class TeacherServiceImpl implements ITeacherService {
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Override
     public Teacher createTeacher(TeacherCreateReq req) {

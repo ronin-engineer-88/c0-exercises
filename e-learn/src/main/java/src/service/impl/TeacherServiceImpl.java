@@ -28,7 +28,6 @@ public class TeacherServiceImpl implements ITeacherService {
 
     @Override
     public void deleteTeacher(Long teacherId) {
-
     }
 
     @Override

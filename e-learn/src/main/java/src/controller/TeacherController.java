@@ -50,10 +50,6 @@ public class TeacherController {
 
     /**
      * delete một teacher cụ thể.
-     * <p>
-     * Xóa mềm có nghĩa là teacher được đánh dấu là đã xóa nhưng không bị xóa vĩnh viễn khỏi cơ sở dữ liệu.
-     * </p>
-     *
      * @param teacherId ID của teacher cần xóa.
      * @return          ResponseEntity với thông báo thành công.
      * @see ITeacherService#deleteTeacher(Long)

@@ -47,17 +47,17 @@ public class UrlConstant {
         //
         public static final String USER_INFO = "users/{user_id}";
         //
-        public static final String USER_COURSE_INFO = "user-course/{user_course_id}";
+        public static final String USER_COURSE_INFO = "users/{user_id}/courses/{course_id}/details";
         //
-        public static final String USER_COURSE_LESSON_INFO = "user-course-lesson/{user_course_lesson_id}";
+        public static final String USER_COURSE_LESSON_INFO = "users/{user_id}/courses/{course_id}/lesson/{lesson_id}details";
         //
-        public static final String TEACHER_INFO = "teachers/{teacher_id}";
+        public static final String TEACHER_INFO = "teachers/{teacher_id}/details";
         //
-        public static final String COURSE_INFO = "courses/{course_id}";
+        public static final String COURSE_INFO = "courses/{course_id}/details";
         //
-        public static final String CHAPTER_INFO = "chapters/{chapter_id}";
+        public static final String CHAPTER_INFO = "chapters/{chapter_id}/details";
         //
-        public static final String LESSON_INFO = "lessons/{lesson_id}";
+        public static final String LESSON_INFO = "lessons/{lesson_id}/details";
         //
         public static final String USER_REGISTER = "register";
         //

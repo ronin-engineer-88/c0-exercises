@@ -3,6 +3,7 @@ package src.dto.request.user;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,9 @@ import lombok.experimental.SuperBuilder;
 
 public class UserLoginReq {
 
+    @Size(max = 50, message = "Username must not exceed 50 characters.")
     private String username;
 
+    @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters.")
     private String password;
 }

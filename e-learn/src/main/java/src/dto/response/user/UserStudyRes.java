@@ -20,9 +20,9 @@ import lombok.experimental.SuperBuilder;
 
 public class UserStudyRes {
 
-    private int userId;
+    private Long userId;
 
-    private int courseId;
+    private Long courseId;
 
     private String status;
 

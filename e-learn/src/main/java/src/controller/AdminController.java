@@ -1,5 +1,6 @@
 package src.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class AdminController {
      * @return Thông tin đăng nhập Admin
      */
     @PostMapping(UrlConstant.LOGIN)
-    public ResponseEntity<?> login(@RequestBody UserLoginReq req) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginReq req) {
         return ResponseEntity.ok(adminService.login(req));
     }
 
@@ -35,6 +36,7 @@ public class AdminController {
      */
     @GetMapping(UrlConstant.USER_INFO)
     public ResponseEntity<?> getUserInfo(@PathVariable("user_id") Long userId) {
+
         return ResponseEntity.ok(adminService.getUserInfo(userId));
     }
 
@@ -48,8 +50,10 @@ public class AdminController {
      * @return Thông tin chi tiết của user_course
      */
     @GetMapping(UrlConstant.USER_COURSE_INFO)
-    public ResponseEntity<?> getUserCourseInfo(@PathVariable("user_id") Long userId,
-                                               @PathVariable("course_id") Long courseId) {
+    public ResponseEntity<?> getUserCourseInfo(
+            @PathVariable("user_id") Long userId,
+            @PathVariable("course_id") Long courseId) {
+
         return ResponseEntity.ok(adminService.getUserCourseInfo(userId, courseId));
     }
 
@@ -64,9 +68,11 @@ public class AdminController {
      * @return Thông tin chi tiết của bài học và trạng thái học của người dùng
      */
     @GetMapping(UrlConstant.USER_COURSE_LESSON_INFO)
-    public ResponseEntity<?> getUserCourseLessonInfo(@PathVariable("user_id") Long userId,
-                                                     @PathVariable("course_id") Long courseId,
-                                                     @PathVariable("lesson_id") Long lessonId){
+    public ResponseEntity<?> getUserCourseLessonInfo(
+            @PathVariable("user_id") Long userId,
+            @PathVariable("course_id") Long courseId,
+            @PathVariable("lesson_id") Long lessonId) {
+
         return ResponseEntity.ok(adminService.getUserCourseLessonInfo(userId, courseId, lessonId));
     }
 
@@ -79,6 +85,7 @@ public class AdminController {
      */
     @GetMapping(UrlConstant.TEACHER_INFO)
     public ResponseEntity<?> getTeacherInfo(@PathVariable("teacher_id") Long teacherId) {
+
         return ResponseEntity.ok(adminService.getTeacherInfo(teacherId));
     }
 
@@ -91,6 +98,7 @@ public class AdminController {
      */
     @GetMapping(UrlConstant.COURSE_INFO)
     public ResponseEntity<?> getCourseInfo(@PathVariable("course_id") Long courseId) {
+
         return ResponseEntity.ok(adminService.getCourseInfo(courseId));
     }
 
@@ -103,6 +111,7 @@ public class AdminController {
      */
     @GetMapping(UrlConstant.CHAPTER_INFO)
     public ResponseEntity<?> getChapterInfo(@PathVariable("chapter_id") Long chapterId) {
+
         return ResponseEntity.ok(adminService.getChapterInfo(chapterId));
     }
 
@@ -116,6 +125,7 @@ public class AdminController {
      */
     @GetMapping(UrlConstant.LESSON_INFO)
     public ResponseEntity<?> getLessonInfo(@PathVariable("lesson_id") Long lessonId) {
+
         return ResponseEntity.ok(adminService.getLessonInfo(lessonId));
     }
 }

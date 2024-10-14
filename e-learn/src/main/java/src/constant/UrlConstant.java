@@ -74,5 +74,7 @@ public class UrlConstant {
         public static final String USER_SEARCH_REGISTERED_COURSE = "courses/registered";
         //
         public static final String USER_STUDY = "courses/{course_id}/study";
+        //
+        public static final String ADD_TEACHERS = "/teachers";
     }
 

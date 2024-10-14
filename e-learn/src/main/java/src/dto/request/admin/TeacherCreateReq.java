@@ -18,17 +18,18 @@ import lombok.experimental.SuperBuilder;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CourseCreateReq {
-    @NotBlank(message = "Name cannot be blank")
-    @Size(max = 255, message = "Name must be less than or equal to 255 characters")
+public class TeacherCreateReq {
+    @NotBlank(message = "Name must not be blank.")
+    @Size(max = 50, message = "Name must not exceed 50 characters.")
     private String name;
 
-    @Size(max = 1000, message = "Description must be less than or equal to 1000 characters")
-    private String description;
-
-    @NotBlank(message = "Status cannot be blank")
-    @Size(max = 50, message = "Status must be less than or equal to 50 characters")
+    @NotBlank(message = "Status must not be blank.")
+    @Size(max = 50, message = "Status must not exceed 50 characters.")
     private String status;
 
-    private Long teacherId;
+    @Size(max = 50, message = "Username must not exceed 50 characters.")
+    private String username;
+
+    @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters.")
+    private String password;
 }

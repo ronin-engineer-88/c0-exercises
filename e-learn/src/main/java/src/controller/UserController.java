@@ -9,8 +9,6 @@ import src.dto.request.user.UserInfoReq;
 import src.dto.request.user.UserLoginReq;
 import src.dto.request.user.UserSearchCourseReq;
 import src.dto.request.user.UserSearchReq;
-import src.dto.response.admin.UserSearchRes;
-import src.dto.response.user.*;
 import src.service.IUserService;
 
 @RestController
@@ -213,7 +211,6 @@ public class UserController {
             @PathVariable("user_id") Long userId,
             @PathVariable("course_id") Long courseId,
             @RequestBody String status) {
-
 
         return ResponseEntity.ok(userService.study(userId, courseId, status));
     }

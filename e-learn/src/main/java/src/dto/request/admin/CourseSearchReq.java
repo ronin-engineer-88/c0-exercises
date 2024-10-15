@@ -8,8 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-
-import java.util.Date;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,11 +25,11 @@ public class CourseSearchReq {
 
     private String teacherName;
 
-    private Date createdDateFrom;
+    private LocalDate createdDateFrom;
 
-    private Date createdDateTo;
+    private LocalDate createdDateTo;
 
-    private String ratingFrom;
+    private Double ratingFrom;
 
-    private String ratingTo;
+    private Double ratingTo;
 }

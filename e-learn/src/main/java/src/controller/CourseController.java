@@ -8,6 +8,7 @@ import src.constant.UrlConstant;
 import src.dto.request.admin.CourseCreateReq;
 import src.dto.request.admin.CourseSearchReq;
 import src.dto.request.admin.CourseUpdateReq;
+import src.dto.response.admin.CourseResponseDto;
 import src.dto.response.admin.CourseSearchRes;
 import src.entity.Course;
 import src.service.ICourseService;
@@ -23,13 +24,13 @@ public class CourseController {
      * Tạo mới một khóa học.
      *
      * @param req đối tượng {@link CourseCreateReq} chứa thông tin course cần tạo.
-     * @return một ResponseEntity chứa đối tượng {@link Course} đã được tạo.
+     * @return một CourseResponseDto chứa đối tượng {@link Course} đã được tạo.
      * @see ICourseService#createCourse(CourseCreateReq)
      */
     @PostMapping(UrlConstant.ADD_COURSES)
-    public ResponseEntity<?> addCourse(@Valid @RequestBody CourseCreateReq req) {
-        Course createdCourse = courseService.createCourse(req);
-        return ResponseEntity.ok(createdCourse);
+    public CourseResponseDto addCourse(@Valid @RequestBody CourseCreateReq req) {
+        CourseResponseDto createdCourse = courseService.createCourse(req);
+        return createdCourse;
     }
 
     /**
@@ -37,14 +38,14 @@ public class CourseController {
      *
      * @param courseId ID của khóa học cần cập nhật.
      * @param req      đối tượng {@link CourseUpdateReq} chứa thông tin update cho khóa học.
-     * @return         ResponseEntity chứa đối tượng {@link Course} đã được cập nhật.
+     * @return         CourseResponseDto chứa đối tượng {@link Course} đã được cập nhật.
      * @see ICourseService#updateCourse(Long, CourseUpdateReq)
      */
     @PutMapping(UrlConstant.UPDATE_COURSES)
-    public ResponseEntity<?> updateCourse(@PathVariable("course_id") Long courseId,
+    public CourseResponseDto updateCourse(@PathVariable("course_id") Long courseId,
                                           @Valid @RequestBody CourseUpdateReq req) {
-        Course updatedCourse = courseService.updateCourse(courseId, req);
-        return ResponseEntity.ok(updatedCourse);
+        CourseResponseDto updatedCourse = courseService.updateCourse(courseId, req);
+        return updatedCourse;
     }
 
     /**
@@ -55,9 +56,8 @@ public class CourseController {
      * @see ICourseService#softDeleteCourse(Long)
      */
     @DeleteMapping(UrlConstant.DELETE_COURSES)
-    public ResponseEntity<?> softDeleteCourse(@PathVariable("course_id") Long courseId) {
+    public void softDeleteCourse(@PathVariable("course_id") Long courseId) {
         courseService.softDeleteCourse(courseId);
-        return ResponseEntity.ok("Course soft deleted successfully.");
     }
 
     /**

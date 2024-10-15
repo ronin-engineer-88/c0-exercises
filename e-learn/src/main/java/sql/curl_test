@@ -1,0 +1,11 @@
+// api create course
+curl --location 'http://localhost:8081/api/v1/courses' \
+--header 'Content-Type: application/json' \
+--data '{
+  "name": "Introduction to Golang",
+  "description": "This course covers the basics of golang.",
+  "status": 1,
+  "teacher_id": 2
+}'
+
+// api ...

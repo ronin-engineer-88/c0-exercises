@@ -1,17 +1,15 @@
-package src.dto.request.admin;
+package src.dto.response.admin;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,16 +18,11 @@ import lombok.experimental.SuperBuilder;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CourseUpdateReq {
-    @NotBlank(message = "Name cannot be blank")
-    @Size(max = 255, message = "Name must be less than or equal to 255 characters")
+public class CourseResponseDto {
     private String name;
-
-    @Size(max = 1000, message = "Description must be less than or equal to 1000 characters")
     private String description;
-
-    @NotNull(message = "Status cannot be not null")
-    private Integer status;
-
+    private String status;
     private Long teacherId;
+    private String createdDate;
+    private String updatedDate;
 }

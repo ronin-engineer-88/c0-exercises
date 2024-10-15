@@ -54,6 +54,9 @@ public class DateUtils {
      * @return chuỗi ngày và giờ theo định dạng yyyy-MM-dd HH:mm:ss
      */
     public static String dateTimeToString(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
         return dateTime.format(formatter);
     }

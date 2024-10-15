@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum UserStatusConstant {
+public enum ConfigConstant {
 
-    ACTIVE("ACTIVE"),
-    INACTIVE("INACTIVE")
-    ;
+    ACTIVE("active", 1),
+    INACTIVE("inactive", 0);
 
     private final String value;
+    private final int code;
 }

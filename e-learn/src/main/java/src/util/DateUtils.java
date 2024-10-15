@@ -2,15 +2,17 @@ package src.util;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
-
+import java.util.Date;
 
 
 public class DateUtils {
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Chuyển từ chuỗi sang LocalDate.
@@ -115,5 +117,18 @@ public class DateUtils {
      */
     public static LocalDate subtractDays(LocalDate date, long days) {
         return date.minusDays(days);
+    }
+
+    /**
+     * Chuyển đổi LocalDateTime thành Date.
+     *
+     * @param localDateTime đối tượng LocalDateTime cần chuyển đổi
+     * @return đối tượng Date tương ứng
+     */
+    public static Date convertToDate(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

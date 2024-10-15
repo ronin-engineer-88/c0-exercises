@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,12 +33,6 @@ public class Student extends BaseEntity {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
-
-    @Column(name = "updated_date")
-    private LocalDateTime updatedDate;
-
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private List<StudentCourse> studentCourses;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudentCourse> studentCourses = new ArrayList<>();
 }

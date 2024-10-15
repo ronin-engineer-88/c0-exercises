@@ -16,9 +16,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class StudentCourseLesson extends BaseEntity {
 
-    @Column(name = "status")
-    private String status;
-
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "user_course_user_id", referencedColumnName = "student_id"),
@@ -28,7 +25,10 @@ public class StudentCourseLesson extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
-    private Lesson lessonId;
+    private Lesson lesson;
+
+    @Column(name = "status")
+    private String status;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;

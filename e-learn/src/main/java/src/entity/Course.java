@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,11 +26,11 @@ public class Course extends BaseEntity {
     @Column(name = "status")
     private String status;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<StudentCourse> studentCourses;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudentCourse> studentCourses = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Chapter> chapters;
+    private List<Chapter> chapters = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")

@@ -10,9 +10,9 @@ spring:
       enabled: true
 
   datasource:
-    url: jdbc:mysql://localhost:3306/e_learn
+    url: jdbc:mysql://localhost:3306/elearning
     username: root
-    password: Dylanp240502@
+    password: password
 
   jpa:
     show-sql: true

@@ -1,11 +1,14 @@
 package src.service.impl;
 
+import org.springframework.stereotype.Service;
 import src.dto.request.user.UserLoginReq;
 import src.dto.response.admin.*;
 import src.entity.Teacher;
 import src.service.IAdminService;
 
+@Service
 public class AdminServiceImpl implements IAdminService {
+
     @Override
     public Object login(UserLoginReq req) {
         return req;

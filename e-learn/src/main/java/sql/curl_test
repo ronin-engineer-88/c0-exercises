@@ -23,5 +23,14 @@ curl --location --request DELETE 'http://localhost:8081/api/v1/courses/9' \
 --data ''
 
 // api get course
-curl --location 'http://localhost:8081/api/v1/courses?page=0&page_size=10' \
---data ''
+curl --location --request GET 'http://localhost:8081/api/v1/courses?page=0&page_size=10' \
+--header 'Content-Type: application/json' \
+--data '{
+   //"name": "Golang",
+   //"status": "active",
+   //"teacher_name": "Ms. Johnson",
+   //"created_date_from": "2024-01-01",
+   //"created_date_to": "2024-12-31",
+   //"rating_from": 4,
+   //"rating_to": 5.0
+}'

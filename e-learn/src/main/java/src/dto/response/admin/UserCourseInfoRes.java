@@ -1,5 +1,4 @@
-package src.dto.response.user;
-
+package src.dto.response.admin;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -18,11 +17,25 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
-public class UserRateCourseRes {
+public class UserCourseInfoRes {
 
     private Long userId;
 
-    private Long courseID;
+    private String userName;
 
-    private Integer rate;
+    private String userStatus;
+
+    private Integer userAge;
+
+    private String userUsername;
+
+    private String userPassword;
+
+    private Long courseId;
+
+    private String courseName;
+
+    private String courseDescription;
+
+    private String courseStatus;
 }

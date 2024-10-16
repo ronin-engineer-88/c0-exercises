@@ -19,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 
 public class UserEnrollCourseRes {
 
-    private int userId;
+    private Long userId;
 
-    private int courseID;
+    private Long courseID;
 }

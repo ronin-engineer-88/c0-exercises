@@ -1,6 +1,7 @@
 package src.dto.request.user;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import src.entity.Teacher;
+
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,9 +26,11 @@ public class UserSearchCourseReq {
 
     private String name;
 
-    private String fromDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date fromDate;
 
-    private String toDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date toDate;
 
     private String status;
 

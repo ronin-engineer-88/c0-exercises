@@ -1,47 +1,27 @@
 package src.controller;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
 import src.dto.request.user.UserInfoReq;
 import src.dto.request.user.UserLoginReq;
 import src.dto.request.user.UserSearchCourseReq;
 import src.dto.request.user.UserSearchReq;
-import src.dto.response.admin.UserSearchRes;
-import src.dto.response.user.*;
+import src.service.IUserService;
 
 @RestController
 @RequestMapping(UrlConstant.API_V1)
 public class UserController {
+    private IUserService userService;
 
-    @PostMapping(UrlConstant.USER_LOGIN)
-    public Object login(@RequestBody UserLoginReq req) {
-        return req;
+    // Using setter injection
+    @Autowired
+    public void setUserService(IUserService userService) {
+        this.userService = userService;
     }
 
-    @DeleteMapping(UrlConstant.DELETE_USERS)
-    public Object softDeleteUser(@PathVariable("user_id") Long userId) {
-        return userId;
-    }
-
-    @GetMapping(UrlConstant.GET_USERS)
-    public Object getUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "created_date") String sort,
-            @RequestBody UserSearchReq req) {
-
-        UserSearchRes res = new UserSearchRes();
-        res.setSort(sort);
-        res.setPage(page);
-        res.setPageSize(pageSize);
-        res.setUsername(req.getUsername());
-        res.setName(req.getName());
-        res.setStatus(req.getStatus());
-        res.setCreatedDateFrom(req.getCreatedDateFrom());
-        res.setCreatedDateTo(req.getCreatedDateTo());
-
-        return res;
-    }
 
     /**
      * User Đăng ký
@@ -50,8 +30,22 @@ public class UserController {
      * @return Thông tin người dùng đã đăng ký
      */
     @PostMapping(UrlConstant.USER_REGISTER)
-    public Object register(@RequestBody UserInfoReq req) {
-        return req;
+    public ResponseEntity<?> register(@Valid @RequestBody UserInfoReq req) {
+
+        return ResponseEntity.ok(userService.register(req));
+    }
+
+
+    /**
+     * User Đăng nhập
+     *
+     * @param req Thông tin người dùng cần đăng nhập
+     * @return Thông tin người dùng đã đăng nhập
+     */
+    @PostMapping(UrlConstant.USER_LOGIN)
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginReq req) {
+
+        return ResponseEntity.ok(userService.login(req));
     }
 
 
@@ -63,19 +57,46 @@ public class UserController {
      * @return Thông tin người dùng sau khi cập nhật
      */
     @PutMapping(UrlConstant.UPDATE_USER)
-    public Object userUpdate(@PathVariable("user_id") int userId,
-                             @RequestBody UserInfoReq req) {
-        UserUpdateRes res = new UserUpdateRes();
-        res.setId(userId);
-        res.setUsername(req.getUsername());
-        res.setPassword(req.getPassword());
-        res.setName(req.getName());
-        res.setStatus(req.getStatus());
-        res.setCreatedDate(req.getCreatedDate());
-        res.setUpdatedDate(req.getUpdatedDate());
+    public ResponseEntity<?> userUpdate(
+            @PathVariable("user_id") Long userId,
+            @Valid @RequestBody UserInfoReq req) {
 
-        return res;
+        return ResponseEntity.ok(userService.updateUser(userId, req));
     }
+
+
+    /**
+     * User xóa tài khoản
+     *
+     * @param userId ID của người dùng xóa tài khoaản
+     * @return Thông tin người dùng sau khi xóa tài khoản
+     */
+    @DeleteMapping(UrlConstant.DELETE_USERS)
+    public ResponseEntity<?> softDeleteUser(@PathVariable("user_id") Long userId) {
+
+        return ResponseEntity.ok(userService.deleteUser(userId));
+    }
+
+
+    /**
+     * Lấy danh sách users với phân trang và sắp xếp.
+     *
+     * @param page trang hiện tại
+     * @param pageSize số lượng bản ghi trên mỗi trang
+     * @param sort tiêu chí sắp xếp
+     * @param req tiêu chí tìm kiếm người dùng
+     * @return danh sách người dùng phù hợp với tiêu chí tìm kiếm
+     */
+    @GetMapping(UrlConstant.GET_USERS)
+    public ResponseEntity<?> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "created_date") String sort,
+            @RequestBody UserSearchReq req) {
+
+        return ResponseEntity.ok(userService.getUsers(page, pageSize, sort, req));
+    }
+
 
     /**
      * User Đăng ký khóa học
@@ -85,14 +106,11 @@ public class UserController {
      * @return Thông tin về việc đăng ký khóa học
      */
     @PostMapping(UrlConstant.USER_ENROLL_COURSE)
-    public Object enroll(@PathVariable("user_id") int userId,
-                         @PathVariable("course_id") int courseId) {
+    public ResponseEntity<?> enroll(
+            @PathVariable("user_id") Long userId,
+            @PathVariable("course_id") Long courseId) {
 
-        UserEnrollCourseRes res = new UserEnrollCourseRes();
-        res.setUserId(userId);
-        res.setCourseID(courseId);
-
-        return res;
+        return ResponseEntity.ok(userService.enrollCourse(userId, courseId));
     }
 
 
@@ -105,17 +123,12 @@ public class UserController {
      * @return Thông tin về đánh giá của người dùng
      */
     @PostMapping(UrlConstant.USER_RATE_COURSE)
-    public Object rateCourse(@PathVariable("user_id") int userId,
-                             @PathVariable("course_id") int courseId,
-                             @RequestBody int rate) {
+    public ResponseEntity<?> rateCourse(
+            @PathVariable("user_id") Long userId,
+            @PathVariable("course_id") Long courseId,
+            @RequestBody Integer rate) {
 
-        UserRateCourseRes res = new UserRateCourseRes();
-
-        res.setUserId(userId);
-        res.setCourseID(courseId);
-        res.setRate(rate);
-
-        return res;
+        return ResponseEntity.ok(userService.rateCourse(userId, courseId, rate));
     }
 
 
@@ -128,16 +141,12 @@ public class UserController {
      * @return Thông tin về nhận xét của người dùng
      */
     @PostMapping(UrlConstant.USER_REVIEW_COURSE)
-    public Object commentCourse(@PathVariable("user_id") int userId,
-                                @PathVariable("course_id") int courseId,
-                                @RequestBody String review) {
+    public ResponseEntity<?> commentCourse(
+            @PathVariable("user_id") Long userId,
+            @PathVariable("course_id") Long courseId,
+            @RequestBody String review) {
 
-        UserReviewCourseRes res = new UserReviewCourseRes();
-        res.setUserId(userId);
-        res.setCourseId(courseId);
-        res.setReview(review);
-
-        return res;
+        return ResponseEntity.ok(userService.reviewCourse(userId, courseId, review));
     }
 
 
@@ -148,8 +157,9 @@ public class UserController {
      * @return Thông tin chi tiết của khóa học
      */
     @GetMapping(UrlConstant.USER_VIEW_COURSE_INFO)
-    public Object viewCourseInfo(@PathVariable("course_id") String courseId) {
-        return courseId;
+    public ResponseEntity<?> viewCourseInfo(@PathVariable("course_id") Long courseId) {
+
+        return ResponseEntity.ok(userService.getCourseInfo(courseId));
     }
 
 
@@ -173,26 +183,15 @@ public class UserController {
      * @param sort Tiêu chí sắp xếp
      * @return Kết quả tìm kiếm khóa học
      */
-    @GetMapping("{user_id}" + UrlConstant.USER_SEARCH_REGISTERED_COURSE)
-    public Object searchRegisteredCourse(@PathVariable("user_id") int userId,
-                                         @RequestBody UserSearchCourseReq req,
-                                         @RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "10") int pageSize,
-                                         @RequestParam(defaultValue = "created_date") String sort) {
+    @GetMapping(UrlConstant.USER_SEARCH_REGISTERED_COURSE)
+    public ResponseEntity<?> searchRegisteredCourse(
+            @PathVariable("user_id") Long userId,
+            @RequestBody UserSearchCourseReq req,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "created_date") String sort) {
 
-        UserSearchCourseRes res = new UserSearchCourseRes();
-        res.setUserId(userId);
-        res.setName(req.getName());
-        res.setFromDate(req.getFromDate());
-        res.setToDate(req.getToDate());
-        res.setTeacher(req.getTeacher());
-        res.setStatus(req.getStatus());
-        res.setNumLessons(req.getNumLessons());
-        res.setSize(pageSize);
-        res.setPage(page);
-        res.setSort(sort);
-
-        return res;
+        return ResponseEntity.ok(userService.getRegisterCourse(userId, req, page, pageSize, sort));
     }
 
 
@@ -207,16 +206,12 @@ public class UserController {
      * @param status Trạng thái học (start, in-progress, finish)
      * @return Trạng thái học của người dùng
      */
-    @PatchMapping("{user_id}" + UrlConstant.USER_STUDY)
-    public Object study(@PathVariable("user_id") int userId,
-                        @PathVariable("course_id") int courseId,
-                        @RequestBody String status) {
+    @PatchMapping(UrlConstant.USER_STUDY)
+    public ResponseEntity<?> study(
+            @PathVariable("user_id") Long userId,
+            @PathVariable("course_id") Long courseId,
+            @RequestBody String status) {
 
-        UserStudyRes res = new UserStudyRes();
-        res.setUserId(userId);
-        res.setCourseId(courseId);
-        res.setStatus(status);
-
-        return res;
+        return ResponseEntity.ok(userService.study(userId, courseId, status));
     }
 }

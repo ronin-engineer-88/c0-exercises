@@ -8,4 +8,20 @@ curl --location 'http://localhost:8081/api/v1/courses' \
   "teacher_id": 2
 }'
 
-// api ...
+// api update course
+curl --location --request PUT 'http://localhost:8081/api/v1/courses/11' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "English 11",
+    "description": "A beginner'\''s course on english 11.",
+    "status": 0,
+    "teacher_id": 2
+}'
+
+// api delete course
+curl --location --request DELETE 'http://localhost:8081/api/v1/courses/9' \
+--data ''
+
+// api get course
+curl --location 'http://localhost:8081/api/v1/courses?page=0&page_size=10' \
+--data ''

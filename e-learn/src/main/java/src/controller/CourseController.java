@@ -74,15 +74,17 @@ public class CourseController {
      * @see ICourseService#getCourses(int, int, String, CourseSearchReq)
      */
     @GetMapping(UrlConstant.GET_COURSES)
-    public ResponseEntity<CourseSearchRes> getCourses(
+    public CourseSearchRes getCourses(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "created_date") String sort,
-            @RequestBody CourseSearchReq req) {
+            @RequestParam(defaultValue = "createdDate") String sort,
+            @RequestBody(required = false) CourseSearchReq req) {
 
-        CourseSearchRes res = courseService.getCourses(page, pageSize, sort, req);
-        return ResponseEntity.ok(res);
+        if (req == null) {
+            req = new CourseSearchReq();
+        }
+
+        return courseService.getCourses(page, pageSize, sort, req);
     }
-
 }
 

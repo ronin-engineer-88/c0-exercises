@@ -21,7 +21,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CourseSearchRes {
-    private List<Course> courses;
+    private List<CourseResponseDto> courses;
     private long totalElements;
     private int totalPages;
     private String sort;

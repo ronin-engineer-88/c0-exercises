@@ -23,8 +23,12 @@ import src.repository.TeacherRepository;
 import src.service.ICourseService;
 import src.util.DateUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements ICourseService {
@@ -44,11 +48,7 @@ public class CourseServiceImpl implements ICourseService {
         Course course = new Course();
         BeanUtils.copyProperties(req, course);
         course.setCreatedDate(LocalDateTime.now());
-        if (req.getStatus().equals(ConfigConstant.ACTIVE.getCode())) {
-            course.setStatus(ConfigConstant.ACTIVE.getValue());
-        } else {
-            course.setStatus(ConfigConstant.INACTIVE.getValue());
-        }
+        course.setStatus(ConfigConstant.ACTIVE.getValue());
 
         assignTeacher(req.getTeacherId(), course);
         Course savedCourse = courseRepository.save(course);
@@ -70,10 +70,10 @@ public class CourseServiceImpl implements ICourseService {
 
         BeanUtils.copyProperties(req, course);
         course.setUpdatedDate(LocalDateTime.now());
-        if (req.getStatus().equals(course.getStatus())) {
-            course.setStatus(ConfigConstant.ACTIVE.getValue());
-        } else {
-            course.setStatus(ConfigConstant.INACTIVE.getValue());
+        String newStatus = (req.getStatus() == ConfigConstant.INACTIVE.getCode())
+                                            ? ConfigConstant.INACTIVE.getValue() : ConfigConstant.ACTIVE.getValue();
+        if (!newStatus.equals(course.getStatus())) {
+            course.setStatus(newStatus);
         }
 
         assignTeacher(req.getTeacherId(), course);
@@ -81,6 +81,7 @@ public class CourseServiceImpl implements ICourseService {
 
         CourseResponseDto courseRes = new CourseResponseDto();
         BeanUtils.copyProperties(savedCourse, courseRes);
+        courseRes.setTeacherId(savedCourse.getTeacher().getId());
         courseRes.setUpdatedDate(DateUtils.dateTimeToString(savedCourse.getUpdatedDate()));
 
         return courseRes;
@@ -91,10 +92,6 @@ public class CourseServiceImpl implements ICourseService {
         Course course = courseRepository.getCourseById(courseId);
         if (Objects.isNull(course)) {
             throw new CourseNotFoundException("Course not found with id: " + courseId);
-        }
-
-        if (course.getStatus().equals(ConfigConstant.INACTIVE.getValue())) {
-            throw new IllegalStateException("Course is already 'inactive'");
         }
 
         course.setStatus(ConfigConstant.INACTIVE.getValue());
@@ -119,11 +116,18 @@ public class CourseServiceImpl implements ICourseService {
                 pageRequest
         );
 
+        List<Course> courses = coursePage.getContent();
+        List<CourseResponseDto> listCourseRes = courses.stream().map(course -> {
+                    CourseResponseDto courseRes = new CourseResponseDto();
+                    BeanUtils.copyProperties(course, courseRes);
+                    return courseRes;
+                })
+                .collect(Collectors.toList());
+
         CourseSearchRes res = new CourseSearchRes();
-        res.setCourses(coursePage.getContent());
+        res.setCourses(listCourseRes);
         res.setTotalElements(coursePage.getTotalElements());
         res.setTotalPages(coursePage.getTotalPages());
-        res.setSort(sort);
         res.setPage(page);
         res.setPageSize(pageSize);
         return res;

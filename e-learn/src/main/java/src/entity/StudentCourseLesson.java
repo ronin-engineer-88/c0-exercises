@@ -28,7 +28,7 @@ public class StudentCourseLesson extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
-    private Lesson lessonId;
+    private Lesson lesson;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;

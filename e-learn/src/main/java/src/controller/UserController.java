@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
-import src.dto.request.user.UserInfoReq;
-import src.dto.request.user.UserLoginReq;
-import src.dto.request.user.UserSearchCourseReq;
-import src.dto.request.user.UserSearchReq;
+import src.dto.request.user.*;
 import src.service.IUserService;
 
 @RestController
@@ -30,7 +27,7 @@ public class UserController {
      * @return Thông tin người dùng đã đăng ký
      */
     @PostMapping(UrlConstant.USER_REGISTER)
-    public ResponseEntity<?> register(@Valid @RequestBody UserInfoReq req) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterReq req) {
 
         return ResponseEntity.ok(userService.register(req));
     }
@@ -59,7 +56,7 @@ public class UserController {
     @PutMapping(UrlConstant.UPDATE_USER)
     public ResponseEntity<?> userUpdate(
             @PathVariable("user_id") Long userId,
-            @Valid @RequestBody UserInfoReq req) {
+            @Valid @RequestBody UserUpdateReq req) {
 
         return ResponseEntity.ok(userService.updateUser(userId, req));
     }
@@ -73,8 +70,9 @@ public class UserController {
      */
     @DeleteMapping(UrlConstant.DELETE_USERS)
     public ResponseEntity<?> softDeleteUser(@PathVariable("user_id") Long userId) {
+        userService.deleteUser(userId);
 
-        return ResponseEntity.ok(userService.deleteUser(userId));
+        return ResponseEntity.ok( "User has been successfully deleted.");
     }
 
 
@@ -91,8 +89,11 @@ public class UserController {
     public ResponseEntity<?> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "created_date") String sort,
-            @RequestBody UserSearchReq req) {
+            @RequestParam(defaultValue = "createdDate") String sort,
+            @RequestBody(required = false) UserSearchReq req) {
+
+        if(req == null)
+            req = new UserSearchReq();
 
         return ResponseEntity.ok(userService.getUsers(page, pageSize, sort, req));
     }

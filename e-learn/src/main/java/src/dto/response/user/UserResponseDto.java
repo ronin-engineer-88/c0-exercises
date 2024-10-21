@@ -19,19 +19,20 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
-public class UserUpdateRes {
+public class UserResponseDto {
 
-    private Long id;
+    private String name;
+
+    private Integer age;
 
     private String username;
 
     private String password;
 
-    private String name;
-
-    private Date createdDate;
-
-    private Date updatedDate;
-
     private String status;
+
+    private String createdDate;
+
+    private String updatedDate;
+
 }

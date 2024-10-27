@@ -62,7 +62,4 @@ public class LessonInfoRes {
     private Integer numUserInProgress;
 
 
-
-
-
 }

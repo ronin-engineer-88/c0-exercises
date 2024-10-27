@@ -20,6 +20,7 @@ import src.repository.ChapterRepository;
 import src.repository.CourseRepository;
 import src.service.IChapterService;
 import src.util.DateUtils;
+import src.util.ValidateUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +35,9 @@ public class ChapterServiceImpl implements IChapterService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private ValidateUtils validateUtils;
 
     @Override
     public List<ChapterResponseDto> addChapters(Long courseId, List<ChapterCreateReq> chapterCreateReqs) {
@@ -66,7 +70,7 @@ public class ChapterServiceImpl implements IChapterService {
 
     @Override
     public ChapterResponseDto updateChapter(Long courseId, Long chapterId, ChapterUpdateReq req) {
-        Chapter chapter = validateCourseAndChapter(courseId, chapterId);
+        Chapter chapter = validateUtils.validateCourseAndChapter(courseId, chapterId);
 
         BeanUtils.copyProperties(req, chapter);
         chapter.setDescription(req.getDescription() != null ? req.getDescription() : null);
@@ -81,7 +85,7 @@ public class ChapterServiceImpl implements IChapterService {
 
     @Override
     public void softDeleteChapter(Long courseId, Long chapterId) {
-        Chapter chapter = validateCourseAndChapter(courseId, chapterId);
+        Chapter chapter = validateUtils.validateCourseAndChapter(courseId, chapterId);
         chapter.setStatus(ConfigConstant.ACTIVE.getValue());
         chapter.setUpdatedDate(LocalDateTime.now());
 
@@ -116,23 +120,5 @@ public class ChapterServiceImpl implements IChapterService {
         res.setTotalPages(chapterPage.getTotalPages());
 
         return res;
-    }
-
-    private Chapter validateCourseAndChapter(Long courseId, Long chapterId) {
-        Course course = courseRepository.getCourseById(courseId);
-        if (Objects.isNull(course)) {
-            throw new CourseNotFoundException("Course not found with id: " + courseId);
-        }
-
-        Chapter chapter = chapterRepository.getChapterById(chapterId);
-        if (Objects.isNull(chapter)) {
-            throw new ChapterNotFoundException("Chapter not found with id: " + chapterId);
-        }
-
-        if (!chapter.getCourse().getId().equals(course.getId())) {
-            throw new ChapterNotFoundException("Chapter does not belong to the specified course");
-        }
-
-        return chapter;
     }
 }

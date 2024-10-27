@@ -46,3 +46,4 @@ public class LessonCreateReq {
 
     private Long chapterId;
 }
+

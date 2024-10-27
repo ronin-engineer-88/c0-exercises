@@ -2,7 +2,6 @@ package src.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
 import src.dto.request.admin.CourseCreateReq;

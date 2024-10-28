@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,8 +25,7 @@ public class TeacherUpdateReq {
     @Size(max = 50, message = "Name must not exceed 50 characters.")
     private String name;
 
-    @NotBlank(message = "Status must not be blank.")
-    @Size(max = 50, message = "Status must not exceed 50 characters.")
+    @Pattern(regexp = "^(active|inactive)$", message = "Status must be 'active' or 'inactive'.")
     private String status;
 
     @Size(max = 50, message = "Username must not exceed 50 characters.")

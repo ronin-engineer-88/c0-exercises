@@ -8,6 +8,7 @@ import src.constant.UrlConstant;
 import src.dto.request.admin.TeacherCreateReq;
 import src.dto.request.admin.TeacherSearchReq;
 import src.dto.request.admin.TeacherUpdateReq;
+import src.dto.response.admin.TeacherResDto;
 import src.dto.response.admin.TeacherSearchRes;
 import src.entity.Teacher;
 import src.service.ITeacherService;
@@ -23,13 +24,12 @@ public class TeacherController {
      * Tạo mới một teacher.
      *
      * @param req đối tượng {@link TeacherCreateReq} chứa thông tin teacher cần tạo.
-     * @return một ResponseEntity chứa đối tượng {@link Teacher} đã được tạo.
+     * @return một TeacherResDto chứa đối tượng {@link Teacher} đã được tạo.
      * @see ITeacherService#createTeacher(TeacherCreateReq)
      */
     @PostMapping(UrlConstant.ADD_TEACHERS)
-    public ResponseEntity<?> createTeacher(@Valid @RequestBody TeacherCreateReq req) {
-        Teacher createdTeacher = teacherService.createTeacher(req);
-        return ResponseEntity.ok(createdTeacher);
+    public TeacherResDto createTeacher(@Valid @RequestBody TeacherCreateReq req) {
+        return teacherService.createTeacher(req);
     }
 
 
@@ -38,14 +38,13 @@ public class TeacherController {
      *
      * @param teacherId ID của Teacher cần cập nhật.
      * @param req       đối tượng {@link TeacherUpdateReq} chứa thông tin update cho teacher.
-     * @return          ResponseEntity chứa đối tượng {@link Teacher} đã được cập nhật.
+     * @return          TeacherResDto chứa đối tượng {@link Teacher} đã được cập nhật.
      * @see ITeacherService#updateTeacher(Long, TeacherUpdateReq)
      */
     @PutMapping(UrlConstant.UPDATE_TEACHERS)
-    public ResponseEntity<?> updateTeacher(@PathVariable("teacher_id") Long teacherId,
-                                           @Valid @RequestBody TeacherUpdateReq req) {
-        Teacher updatedTeacher = teacherService.updateTeacher(teacherId, req);
-        return ResponseEntity.ok(updatedTeacher);
+    public TeacherResDto updateTeacher(@PathVariable("teacher_id") Long teacherId,
+                                       @Valid @RequestBody TeacherUpdateReq req) {
+        return teacherService.updateTeacher(teacherId, req);
     }
 
     /**
@@ -71,18 +70,21 @@ public class TeacherController {
      * @param pageSize    số lượng bản ghi trên mỗi trang, mặc định là 10.
      * @param sort        trường -> kết quả sẽ được sắp xếp, mặc định là "created_date".
      * @param req         đối tượng {@link TeacherSearchReq} chứa các bộ lọc tìm kiếm.
-     * @return            ResponseEntity chứa {@link TeacherSearchRes} với kết quả tìm kiếm.
+     * @return            TeacherSearchRes chứa {@link TeacherSearchRes} với kết quả tìm kiếm.
      * @see ITeacherService#getTeachers(int, int, String, TeacherSearchReq)
      */
     @GetMapping(UrlConstant.GET_TEACHERS)
-    public ResponseEntity<TeacherSearchRes> getTeachers(
+    public TeacherSearchRes getTeachers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "created_date") String sort,
-            @Valid @RequestBody TeacherSearchReq req) {
+            @RequestParam(defaultValue = "createdDate") String sort,
+            @RequestBody(required = false) TeacherSearchReq req) {
 
-        TeacherSearchRes res = teacherService.getTeachers(page, pageSize, sort, req);
-        return ResponseEntity.ok(res);
+        if (req == null) {
+            req = new TeacherSearchReq();
+        }
+
+        return teacherService.getTeachers(page, pageSize, sort, req);
     }
 }
 

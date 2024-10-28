@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -26,7 +27,7 @@ public class TeacherSearchReq {
 
     private String status;
 
-    private Date createdDateFrom;
+    private LocalDate createdDateFrom;
 
-    private Date createdDateTo;
+    private LocalDate createdDateTo;
 }

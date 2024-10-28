@@ -8,10 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Date;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,12 +16,11 @@ import java.util.List;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TeacherSearchRes {
-    private List<TeacherResDto> teachers;
-    private long totalElements;
-    private int totalPages;
-    private String sort;
-    private int page;
-    private int pageSize;
-
+public class TeacherResDto {
+    private Long id;
+    private String name;
+    private String username;
+    private String status;
+    private String createdDate;
+    private String updatedDate;
 }

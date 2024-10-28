@@ -10,6 +10,7 @@ import java.util.List;
 @Table(name = "teacher")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Teacher extends BaseEntity {

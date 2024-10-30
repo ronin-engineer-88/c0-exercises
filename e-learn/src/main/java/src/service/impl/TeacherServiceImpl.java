@@ -70,8 +70,10 @@ public class TeacherServiceImpl implements ITeacherService {
 
         BeanUtils.copyProperties(req, teacher, "status");
         teacher.setUpdatedDate(LocalDateTime.now());
-        if (req.getStatus() != null) {
-            teacher.setStatus(req.getStatus());
+        String newStatus = (req.getStatus() == ConfigConstant.INACTIVE.getCode())
+                ? ConfigConstant.INACTIVE.getValue() : ConfigConstant.ACTIVE.getValue();
+        if (!newStatus.equals(teacher.getStatus())) {
+            teacher.setStatus(newStatus);
         }
 
         teacherRepository.save(teacher);

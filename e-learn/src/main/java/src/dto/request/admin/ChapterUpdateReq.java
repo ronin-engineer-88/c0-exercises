@@ -3,10 +3,7 @@ package src.dto.request.admin;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,8 +26,9 @@ public class ChapterUpdateReq {
     @Size(max = 1000, message = "Description must be less than 1000 characters.")
     private String description;
 
-    @NotEmpty(message = "Chapter status is required")
-    private String status;
+    @NotNull(message = "Status cannot be null")
+    @Pattern(regexp = "0|1", message = "Status must be 0 (inactive) or 1 (active)")
+    private Integer status;
 
     @NotNull(message = "Order is required.")
     @Min(value = 1, message = "Order must be greater than 0.")

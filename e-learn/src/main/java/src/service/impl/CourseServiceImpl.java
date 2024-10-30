@@ -23,9 +23,7 @@ import src.repository.TeacherRepository;
 import src.service.ICourseService;
 import src.util.DateUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,8 +41,6 @@ public class CourseServiceImpl implements ICourseService {
 
     @Override
     public CourseResponseDto createCourse(CourseCreateReq req) {
-        validateCourseRequest(req);
-
         Course course = new Course();
         BeanUtils.copyProperties(req, course);
         course.setCreatedDate(LocalDateTime.now());
@@ -144,13 +140,5 @@ public class CourseServiceImpl implements ICourseService {
             }
             course.setTeacher(teacher);
         }
-    }
-
-    private void validateCourseRequest(CourseCreateReq req) {
-        if (req.getStatus() != ConfigConstant.INACTIVE.getCode()
-                && req.getStatus() != ConfigConstant.ACTIVE.getCode()) {
-            throw new IllegalArgumentException("Status must be 0 (inactive) or 1 (active)");
-        }
-        // validate other...
     }
 }

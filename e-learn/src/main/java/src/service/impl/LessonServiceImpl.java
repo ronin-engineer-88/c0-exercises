@@ -88,8 +88,14 @@ public class LessonServiceImpl implements ILessonService {
         }
 
         BeanUtils.copyProperties(req, lesson);
-        lesson.setDescription(req.getDescription() != null ? req.getDescription() : null);
         lesson.setUpdatedDate(LocalDateTime.now());
+        lesson.setDescription(req.getDescription() != null ? req.getDescription() : null);
+        String newStatus = (req.getStatus() == ConfigConstant.INACTIVE.getCode())
+                ? ConfigConstant.INACTIVE.getValue() : ConfigConstant.ACTIVE.getValue();
+        if (!newStatus.equals(chapter.getStatus())) {
+            chapter.setStatus(newStatus);
+        }
+
         lessonRepository.save(lesson);
 
         LessonResDto res = new LessonResDto();

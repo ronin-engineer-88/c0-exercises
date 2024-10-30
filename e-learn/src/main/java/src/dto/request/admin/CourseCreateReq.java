@@ -25,8 +25,10 @@ public class CourseCreateReq {
     @Size(max = 1000, message = "Description must be less than or equal to 1000 characters")
     private String description;
 
-    @NotNull(message = "Status cannot be not null")
+    @NotNull(message = "Status cannot be null")
+    @Pattern(regexp = "0|1", message = "Status must be 0 (inactive) or 1 (active)")
     private Integer status;
+
 
     private Long teacherId;
 }

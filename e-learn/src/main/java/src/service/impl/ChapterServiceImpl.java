@@ -10,6 +10,7 @@ import src.constant.ConfigConstant;
 import src.dto.request.admin.ChapterCreateReq;
 import src.dto.request.admin.ChapterSearchReq;
 import src.dto.request.admin.ChapterUpdateReq;
+import src.dto.request.admin.CourseCreateReq;
 import src.dto.response.admin.ChapterResponseDto;
 import src.dto.response.admin.ChapterSearchRes;
 import src.entity.Chapter;
@@ -74,6 +75,11 @@ public class ChapterServiceImpl implements IChapterService {
 
         BeanUtils.copyProperties(req, chapter);
         chapter.setDescription(req.getDescription() != null ? req.getDescription() : null);
+        String newStatus = (req.getStatus() == ConfigConstant.INACTIVE.getCode())
+                ? ConfigConstant.INACTIVE.getValue() : ConfigConstant.ACTIVE.getValue();
+        if (!newStatus.equals(chapter.getStatus())) {
+            chapter.setStatus(newStatus);
+        }
         chapter.setUpdatedDate(LocalDateTime.now());
 
         Chapter savedChapter = chapterRepository.save(chapter);
@@ -86,7 +92,7 @@ public class ChapterServiceImpl implements IChapterService {
     @Override
     public void softDeleteChapter(Long courseId, Long chapterId) {
         Chapter chapter = validateUtils.validateCourseAndChapter(courseId, chapterId);
-        chapter.setStatus(ConfigConstant.ACTIVE.getValue());
+        chapter.setStatus(ConfigConstant.INACTIVE.getValue());
         chapter.setUpdatedDate(LocalDateTime.now());
 
         chapterRepository.save(chapter);

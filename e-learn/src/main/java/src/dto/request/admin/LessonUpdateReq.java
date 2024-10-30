@@ -3,10 +3,7 @@ package src.dto.request.admin;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,9 +26,10 @@ public class LessonUpdateReq {
     @Size(max = 1000, message = "Description must not exceed 1000 characters.")
     private String description;
 
-    @NotBlank(message = "Status is required.")
-    @Size(max = 50, message = "Status must not exceed 50 characters.")
-    private String status;
+    @NotNull(message = "Status cannot be null")
+    @Pattern(regexp = "0|1", message = "Status must be 0 (inactive) or 1 (active)")
+    private Integer status;
+
 
     @NotBlank(message = "Type is required.")
     @Size(max = 50, message = "Type must not exceed 50 characters.")

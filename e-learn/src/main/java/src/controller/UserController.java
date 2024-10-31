@@ -6,7 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
 import src.dto.request.user.*;
+import src.entity.Course;
 import src.service.IUserService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(UrlConstant.API_V1)
@@ -120,16 +123,16 @@ public class UserController {
      *
      * @param userId ID của người dùng đánh giá khóa học
      * @param courseId ID của khóa học cần đánh giá
-     * @param rate Điểm đánh giá của người dùng
+     * @param req Điểm đánh giá của người dùng
      * @return Thông tin về đánh giá của người dùng
      */
     @PostMapping(UrlConstant.USER_RATE_COURSE)
     public ResponseEntity<?> rateCourse(
             @PathVariable("user_id") Long userId,
             @PathVariable("course_id") Long courseId,
-            @RequestBody Integer rate) {
+            @Valid @RequestBody UserRateCourseReq req) {
 
-        return ResponseEntity.ok(userService.rateCourse(userId, courseId, rate));
+        return ResponseEntity.ok(userService.rateCourse(userId, courseId, req));
     }
 
 
@@ -138,16 +141,16 @@ public class UserController {
      *
      * @param userId ID của người dùng viết nhận xét
      * @param courseId ID của khóa học cần nhận xét
-     * @param review Nội dung nhận xét
+     * @param req Nội dung nhận xét
      * @return Thông tin về nhận xét của người dùng
      */
     @PostMapping(UrlConstant.USER_REVIEW_COURSE)
     public ResponseEntity<?> commentCourse(
             @PathVariable("user_id") Long userId,
             @PathVariable("course_id") Long courseId,
-            @RequestBody String review) {
+            @Valid @RequestBody UserReviewCourseReq req) {
 
-        return ResponseEntity.ok(userService.reviewCourse(userId, courseId, review));
+        return ResponseEntity.ok(userService.reviewCourse(userId, courseId, req));
     }
 
 
@@ -187,10 +190,13 @@ public class UserController {
     @GetMapping(UrlConstant.USER_SEARCH_REGISTERED_COURSE)
     public ResponseEntity<?> searchRegisteredCourse(
             @PathVariable("user_id") Long userId,
-            @RequestBody UserSearchCourseReq req,
+            @RequestBody (required = false) UserSearchCourseReq req,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(defaultValue = "created_date") String sort) {
+            @RequestParam(defaultValue = "createdDate") String sort) {
+
+        if(req == null)
+            req = new UserSearchCourseReq();
 
         return ResponseEntity.ok(userService.getRegisterCourse(userId, req, page, pageSize, sort));
     }
@@ -204,15 +210,18 @@ public class UserController {
      *
      * @param userId ID của người dùng học bài học
      * @param courseId ID của khóa học
-     * @param status Trạng thái học (start, in-progress, finish)
+     * @param req Trạng thái học (start, in-progress, finish)
      * @return Trạng thái học của người dùng
      */
     @PatchMapping(UrlConstant.USER_STUDY)
     public ResponseEntity<?> study(
             @PathVariable("user_id") Long userId,
             @PathVariable("course_id") Long courseId,
-            @RequestBody String status) {
+            @PathVariable("lesson_id") Long lessonId,
+            @RequestBody UserStudyReq req) {
 
-        return ResponseEntity.ok(userService.study(userId, courseId, status));
+        return ResponseEntity.ok(userService.study(userId, courseId, lessonId, req));
     }
+
+
 }

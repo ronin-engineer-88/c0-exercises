@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import src.entity.Teacher;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -26,15 +27,18 @@ public class UserSearchCourseReq {
 
     private String name;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date fromDate;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date toDate;
-
     private String status;
+
+    private String teacherName;
+
+    private LocalDate createdDateFrom;
+
+    private LocalDate createdDateTo;
+
+    private Double ratingFrom;
+
+    private Double ratingTo;
 
     private Integer numLessons;
 
-    private Teacher teacher;
 }

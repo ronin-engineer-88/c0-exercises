@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 import src.entity.Teacher;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,21 +26,11 @@ import java.util.Date;
 
 public class UserSearchCourseRes {
 
-    private Long userId;
+    List<CourseRegisterSearchResponse> registerCourses;
 
-    private String name;
+    private Long totalElements;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date fromDate;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date toDate;
-
-    private Teacher teacher;
-
-    private String status;
-
-    private Integer numLessons;
+    private Integer totalPage;
 
     private Integer page;
 

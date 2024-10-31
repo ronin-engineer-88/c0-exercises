@@ -5,6 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import src.exception.CourseException.CourseInactiveException;
+import src.exception.CourseException.CourseNotFoundException;
+import src.exception.LessonException.LessonNotFoundException;
+import src.exception.LessonException.NoLessonInCourseException;
+import src.exception.UserException.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,6 +52,36 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserCourseNotFoundException.class)
     public ResponseEntity<?> handleValidationExceptions(UserCourseNotFoundException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserAlreadyEnrolledException.class)
+    public ResponseEntity<?> handleValidationExceptions(UserAlreadyEnrolledException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CourseInactiveException.class)
+    public ResponseEntity<?> handleValidationExceptions(CourseInactiveException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserInactiveException.class)
+    public ResponseEntity<?> handleValidationExceptions(UserInactiveException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotYetEnrolledException.class)
+    public ResponseEntity<?> handleValidationExceptions(UserNotYetEnrolledException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(LessonNotFoundException.class)
+    public ResponseEntity<?> handleValidationExceptions(LessonNotFoundException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NoLessonInCourseException.class)
+    public ResponseEntity<?> handleValidationExceptions(NoLessonInCourseException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }

@@ -1,5 +1,4 @@
-package src.dto.response.user;
-
+package src.dto.response.user.CourseDetailResponse;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -18,16 +17,8 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
-public class UserStudyRes {
+public class TeacherDetailDto {
 
-    private Long userId;
-
-    private Long courseId;
-
-    private Long lessonId;
-
-    private String status;
-
-    private String updatedDate;
+    private String name;
 
 }

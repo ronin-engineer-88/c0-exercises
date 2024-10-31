@@ -22,7 +22,9 @@ public class UserRateCourseRes {
 
     private Long userId;
 
-    private Long courseID;
+    private Long courseId;
 
     private Integer rate;
+
+    private String updatedDate;
 }

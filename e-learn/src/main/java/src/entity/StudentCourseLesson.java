@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import src.entity.CompositeKey.StudentCourseLessonId;
 
 import java.time.LocalDateTime;
 
@@ -14,12 +15,16 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentCourseLesson extends BaseEntity {
+public class StudentCourseLesson {
+
+    @EmbeddedId
+    private StudentCourseLessonId id;
 
     @Column(name = "status")
     private String status;
 
     @ManyToOne
+    @MapsId("studentCourseId")
     @JoinColumns({
             @JoinColumn(name = "user_course_user_id", referencedColumnName = "student_id"),
             @JoinColumn(name = "user_course_course_id", referencedColumnName = "course_id")
@@ -27,6 +32,7 @@ public class StudentCourseLesson extends BaseEntity {
     private StudentCourse studentCourse;
 
     @ManyToOne
+    @MapsId("lessonId")
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 

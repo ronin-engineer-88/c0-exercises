@@ -1,5 +1,6 @@
 package src.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,12 +27,7 @@ public class Teacher extends BaseEntity {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
-
-    @Column(name = "updated_date")
-    private LocalDateTime updatedDate;
-
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Course> courses;
 }

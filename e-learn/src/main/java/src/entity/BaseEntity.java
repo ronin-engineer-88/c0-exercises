@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @MappedSuperclass
@@ -24,19 +25,11 @@ public class BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "created_at")
+    @Column(name = "created_date")
     @CreatedDate
-    private Date createdAt;
+    private LocalDateTime createdDate;
 
-    @Column(name = "created_by")
-    @CreatedBy
-    private String createdBy;
-
-    @Column(name = "updated_at")
+    @Column(name = "updated_date")
     @LastModifiedDate
-    private Date updatedAt;
-
-    @Column(name = "updated_by")
-    @LastModifiedBy
-    private String updatedBy;
+    private LocalDateTime updatedDate;
 }

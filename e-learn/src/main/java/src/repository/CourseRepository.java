@@ -5,7 +5,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import src.entity.Course;
 
+import java.util.Optional;
+
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    @Query("SELECT c FROM Course c WHERE c.id = :id")
-    Course getCourseById(@Param("id") Long id);
+    @Query("SELECT c " +
+            "FROM Course c " +
+            "WHERE c.id = :id")
+    Optional<Course> getCourseById(@Param("id") Long id);
 }

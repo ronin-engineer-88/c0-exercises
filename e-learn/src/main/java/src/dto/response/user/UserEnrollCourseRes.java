@@ -21,5 +21,11 @@ public class UserEnrollCourseRes {
 
     private Long userId;
 
-    private Long courseID;
+    private Long courseId;
+
+    private String status;
+
+    private String createdDate;
+
+
 }

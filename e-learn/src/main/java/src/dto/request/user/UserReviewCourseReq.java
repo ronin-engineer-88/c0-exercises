@@ -1,9 +1,9 @@
-package src.dto.response.user;
-
+package src.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,16 +18,8 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
-public class UserStudyRes {
+public class UserReviewCourseReq {
 
-    private Long userId;
-
-    private Long courseId;
-
-    private Long lessonId;
-
-    private String status;
-
-    private String updatedDate;
-
+    @Size(max = 5000, message = "Review must not exceed 5000 characters")
+    private String review;
 }

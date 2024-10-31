@@ -1,5 +1,6 @@
 package src.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,12 +27,6 @@ public class Chapter extends BaseEntity {
 
     @Column(name = "`order`")
     private Integer order;
-
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
-
-    @Column(name = "updated_date")
-    private LocalDateTime updatedDate;
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)

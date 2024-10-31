@@ -1,6 +1,5 @@
 package src.dto.response.user;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -18,16 +17,23 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
-public class UserStudyRes {
+public class CourseRegisterSearchResponse {
 
-    private Long userId;
+    private String name;
 
-    private Long courseId;
-
-    private Long lessonId;
+    private String description;
 
     private String status;
 
+    private String createdDate;
+
     private String updatedDate;
 
+    private Integer rate;
+
+    private String teacherName;
+
+    private Integer numLessons;
+
+    private Integer numChapters;
 }

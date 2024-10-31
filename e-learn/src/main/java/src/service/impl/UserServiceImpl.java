@@ -13,15 +13,16 @@ import src.constant.StatusConstant;
 import src.dto.request.user.*;
 import src.dto.response.admin.UserSearchRes;
 import src.dto.response.user.*;
-import src.entity.Course;
-import src.entity.Student;
-import src.entity.StudentCourse;
-import src.exception.*;
-import src.repository.CourseRepository;
-import src.repository.StudentCourseRepository;
-import src.repository.StudentRepository;
+import src.dto.response.user.CourseDetailResponse.CourseDetailDto;
+import src.entity.*;
+import src.entity.CompositeKey.StudentCourseId;
+import src.entity.CompositeKey.StudentCourseLessonId;
+import src.repository.UserCourseRepository;
+import src.repository.UserRepository;
+import src.repository.UserCourseLessonRepository;
 import src.service.IUserService;
-import src.service.validator.UserValidateService;
+import src.service.validator.*;
+import src.util.CourseUtils;
 import src.util.DateUtils;
 
 import java.time.LocalDateTime;
@@ -33,26 +34,52 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements IUserService {
 
     private static final Logger log = LoggerFactory.getLogger(IUserService.class);
+    private final UserRepository userRepository;
+    private final UserCourseRepository userCourseRepository;
+    private final UserCourseLessonRepository userCourseLessonRepository;
+    private final UserValidateService userValidateService;
+    private final CourseValidateService courseValidateService;
+    private final LessonValidatorService lessonValidatorService;
+    private final UserCourseValidateService userCourseValidateService;
+    private final UserCourseLessonValidateService userCourseLessonValidateService;
+    private final RequestValidateService requestValidateService;
 
     @Autowired
-    private UserValidateService userValidateService;
+    public UserServiceImpl(
+            UserRepository userRepository,
+            UserCourseRepository userCourseRepository,
+            UserCourseLessonRepository userCourseLessonRepository,
+            UserValidateService userValidateService,
+            CourseValidateService courseValidateService,
+            LessonValidatorService lessonValidatorService,
+            UserCourseValidateService userCourseValidateService,
+            UserCourseLessonValidateService userCourseLessonValidateService,
+            RequestValidateService requestValidateService
 
-    @Autowired
-    private StudentRepository studentRepository;
+    ) {
+        this.userRepository = userRepository;
+        this.userCourseRepository = userCourseRepository;
+        this.userCourseLessonRepository = userCourseLessonRepository;
+        this.userValidateService = userValidateService;
+        this.courseValidateService = courseValidateService;
+        this.lessonValidatorService = lessonValidatorService;
+        this.userCourseValidateService = userCourseValidateService;
+        this.userCourseLessonValidateService = userCourseLessonValidateService;
+        this.requestValidateService = requestValidateService;
+    }
 
 
     @Override
     public UserResponseDto register(UserRegisterReq req) {
 
-        if(Objects.nonNull(studentRepository.findStudentByUsername(req.getUsername())))
-            throw new UsernameExistException("Username is already existed!");
+        userValidateService.checkRegisterUsername(req.getUsername());
 
-        Student student = new Student();
-        BeanUtils.copyProperties(req, student);
-        student.setCreatedDate(LocalDateTime.now());
-        student.setStatus(ConfigConstant.ACTIVE.getValue());
+        Student user = new Student();
+        BeanUtils.copyProperties(req, user);
+        user.setCreatedDate(LocalDateTime.now());
+        user.setStatus(ConfigConstant.ACTIVE.getValue());
 
-        Student savedStudent = studentRepository.save(student);
+        Student savedStudent = userRepository.save(user);
 
         UserResponseDto res = new UserResponseDto();
         BeanUtils.copyProperties(savedStudent, res);
@@ -64,15 +91,12 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResponseDto login(UserLoginReq req) {
 
-        Student student = studentRepository.findStudentByUsername(req.getUsername());
-        if(Objects.isNull(student))
-            throw new UserNotFoundException("Incorrect username!");
+        Student user = userValidateService.validateLoginUsername(req.getUsername());
 
-        if(!req.getPassword().equals(student.getPassword()))
-            throw new InvalidPasswordException("Incorrect password!");
+        userValidateService.checkLoginPassword(user, req.getPassword());
 
         UserResponseDto res = new UserResponseDto();
-        BeanUtils.copyProperties(student, res);
+        BeanUtils.copyProperties(user, res);
 
         return res;
     }
@@ -80,15 +104,17 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResponseDto updateUser(Long userId, UserUpdateReq req) {
 
-        userValidateService.validateStatusRequest(req.getStatus());
-        Student student = studentRepository.getStudentById(userId);
-        if(Objects.isNull(student))
-            throw new UserNotFoundException("Not found student with id: " + userId);
+        Student user = userValidateService.validateUserExist(userId);
+        requestValidateService.checkConfigStatusRequest(req.getStatus());
 
-        BeanUtils.copyProperties(req, student);
-        student.setUpdatedDate(LocalDateTime.now());
+        BeanUtils.copyProperties(req, user);
+        user.setUpdatedDate(LocalDateTime.now());
+        String newStatus = (req.getStatus() == ConfigConstant.INACTIVE.getCode())
+                            ? ConfigConstant.INACTIVE.getValue() : ConfigConstant.ACTIVE.getValue();
+        if(!newStatus.equals(user.getStatus()))
+            user.setStatus(newStatus);
 
-        Student savedStudent = studentRepository.save(student);
+        Student savedStudent = userRepository.save(user);
 
         UserResponseDto res = new UserResponseDto();
         BeanUtils.copyProperties(savedStudent, res);
@@ -100,15 +126,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void deleteUser(Long userId) {
 
-        Student student = studentRepository.getStudentById(userId);
-        if(Objects.isNull(student))
-            throw new UserNotFoundException("Not found student with id: " + userId);
+        Student user = userValidateService.validateUserExist(userId);
+        userValidateService.checkActiveUser(user);
 
-        student.setStatus(ConfigConstant.INACTIVE.getValue());
-        student.setUpdatedDate(LocalDateTime.now());
-        studentRepository.save(student);
+        user.setStatus(ConfigConstant.INACTIVE.getValue());
+        user.setUpdatedDate(LocalDateTime.now());
+        userRepository.save(user);
 
-        log.info("Soft delete student with id: {}", userId);
+        log.info("Soft delete user with id: {}", userId);
     }
 
     @Override
@@ -116,7 +141,7 @@ public class UserServiceImpl implements IUserService {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(sort));
 
-        Page<Student> studentPage = studentRepository.findStudents(
+        Page<Student> studentPage = userRepository.findStudents(
                 req.getName(),
                 req.getAge(),
                 req.getUsername(),
@@ -147,63 +172,178 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserEnrollCourseRes enrollCourse(Long userId, Long courseId) {
 
+        Student user = userValidateService.validateUserExist(userId);
+        userValidateService.checkActiveUser(user);
+        Course course = courseValidateService.validateCourseExist(courseId);
+        courseValidateService.validateActiveCourse(course);
+        userCourseValidateService.checkIfUserAlreadyEnrolledCourse(user, course);
+
+        StudentCourseId studentCourseId = new StudentCourseId();
+        studentCourseId.setStudentId(userId);
+        studentCourseId.setCourseId(courseId);
+
+        StudentCourse sc = new StudentCourse();
+        sc.setStudentCourseId(studentCourseId);
+        sc.setStudent(user);
+        sc.setCourse(course);
+        sc.setCreatedDate(LocalDateTime.now());
+        sc.setStatus(StatusConstant.START.getValue());
+
+        StudentCourse savedSc = userCourseRepository.save(sc);
+
+        for(Chapter ch : savedSc.getCourse().getChapters()) {
+            for(Lesson l : ch.getLessons()) {
+                StudentCourseLesson scl = new StudentCourseLesson();
+                StudentCourseLessonId id = new StudentCourseLessonId();
+                id.setStudentCourseId(savedSc.getStudentCourseId());
+                id.setLessonId(l.getId());
+                scl.setId(id);
+                scl.setStudentCourse(savedSc);
+                scl.setLesson(l);
+                scl.setStatus(StatusConstant.START.getValue());
+                scl.setCreatedDate(LocalDateTime.now());
+                userCourseLessonRepository.save(scl);
+            }
+        }
+
         UserEnrollCourseRes res = new UserEnrollCourseRes();
+        BeanUtils.copyProperties(savedSc, res);
         res.setUserId(userId);
-        res.setCourseID(courseId);
+        res.setCourseId(courseId);
+        res.setCreatedDate(DateUtils.dateTimeToString(savedSc.getCreatedDate()));
+
+        log.info("User with id: {} has successfully enrolled in course with id: {}", userId, courseId);
 
         return res;
     }
 
     @Override
-    public UserRateCourseRes rateCourse(Long userId, Long courseId, Integer rate) {
+    public UserRateCourseRes rateCourse(Long userId, Long courseId, UserRateCourseReq req) {
+
+        Student user = userValidateService.validateUserExist(userId);
+        userValidateService.checkActiveUser(user);
+        Course course = courseValidateService.validateCourseExist(courseId);
+        courseValidateService.validateActiveCourse(course);
+        StudentCourse sc = userCourseValidateService.validateUserEnrolledCourse(user, course);
+
+        sc.setRating(req.getRate());
+        sc.setUpdatedDate(LocalDateTime.now());
+
+        StudentCourse savedSc = userCourseRepository.save(sc);
 
         UserRateCourseRes res = new UserRateCourseRes();
         res.setUserId(userId);
-        res.setCourseID(courseId);
-        res.setRate(rate);
+        res.setCourseId(courseId);
+        res.setRate(req.getRate());
+        res.setUpdatedDate(DateUtils.dateTimeToString(savedSc.getUpdatedDate()));
+
+        log.info("User with id: {} has rated course with id: {}", userId, courseId);
 
         return res;
     }
 
     @Override
-    public UserReviewCourseRes reviewCourse(Long userId, Long courseId, String review) {
+    public UserReviewCourseRes reviewCourse(Long userId, Long courseId, UserReviewCourseReq req) {
+
+        Student user = userValidateService.validateUserExist(userId);
+        userValidateService.checkActiveUser(user);
+        Course course = courseValidateService.validateCourseExist(courseId);
+        courseValidateService.validateActiveCourse(course);
+        StudentCourse sc = userCourseValidateService.validateUserEnrolledCourse(user, course);
+
+        sc.setReview(req.getReview());
+        sc.setUpdatedDate(LocalDateTime.now());
+
+        StudentCourse savedSc = userCourseRepository.save(sc);
 
         UserReviewCourseRes res = new UserReviewCourseRes();
         res.setUserId(userId);
         res.setCourseId(courseId);
-        res.setReview(review);
+        res.setReview(req.getReview());
+        res.setUpdatedDate(DateUtils.dateTimeToString(savedSc.getUpdatedDate()));
+
 
         return res;
     }
 
     @Override
-    public Object getCourseInfo(Long courseId) {
-        return courseId;
+    public CourseDetailDto getCourseInfo(Long courseId) {
+
+        Course course = courseValidateService.validateCourseExist(courseId);
+
+        return CourseUtils.convertToDetailDto(course);
     }
 
     @Override
     public UserSearchCourseRes getRegisterCourse(Long userId, UserSearchCourseReq req, Integer page, Integer pageSize, String sort) {
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(sort));
+
+        Page<Course> coursePage = userRepository.findRegisterCourses(
+                userId,
+                req.getName(),
+                req.getStatus(),
+                req.getTeacherName(),
+                req.getCreatedDateFrom(),
+                req.getCreatedDateFrom(),
+                req.getRatingFrom(),
+                req.getRatingTo(),
+                req.getNumLessons(),
+                pageRequest
+        );
+
+        List<Course> courses = coursePage.getContent();
+        List<CourseRegisterSearchResponse> listCourseRegisterRes = courses.stream().map(course -> {
+            CourseRegisterSearchResponse courseRegisterRes = new CourseRegisterSearchResponse();
+            BeanUtils.copyProperties(course, courseRegisterRes);
+            for(StudentCourse sc : course.getStudentCourses()) {
+                if(Objects.equals(sc.getStudent().getId(), userId))
+                    courseRegisterRes.setRate(sc.getRating());
+            }
+            courseRegisterRes.setTeacherName(course.getTeacher().getName());
+            courseRegisterRes.setNumChapters(course.getChapters().size());
+            int numLessons = 0;
+            for(Chapter ch : course.getChapters()) {
+                numLessons += ch.getLessons().size();
+            }
+            courseRegisterRes.setNumLessons(numLessons);
+            return courseRegisterRes;
+        })
+                .collect(Collectors.toList());
+
         UserSearchCourseRes res = new UserSearchCourseRes();
-        res.setUserId(userId);
-        res.setName(req.getName());
-        res.setFromDate(req.getFromDate());
-        res.setToDate(req.getToDate());
-        res.setTeacher(req.getTeacher());
-        res.setStatus(req.getStatus());
-        res.setNumLessons(req.getNumLessons());
-        res.setPageSize(pageSize);
+        res.setRegisterCourses(listCourseRegisterRes);
+        res.setTotalElements(coursePage.getTotalElements());
+        res.setTotalPage(coursePage.getTotalPages());
         res.setPage(page);
-        res.setSort(sort);
+        res.setPageSize(pageSize);
 
         return res;
     }
 
     @Override
-    public UserStudyRes study(Long userId, Long courseId, String status) {
+    public UserStudyRes study(Long userId, Long courseId, Long lessonId, UserStudyReq req) {
+
+        Student user = userValidateService.validateUserExist(userId);
+        userValidateService.checkActiveUser(user);
+        Course course = courseValidateService.validateCourseExist(courseId);
+        courseValidateService.validateActiveCourse(course);
+        StudentCourse sc = userCourseValidateService.validateUserEnrolledCourse(user, course);
+        Lesson lesson = lessonValidatorService.validateLessonExist(lessonId);
+        lessonValidatorService.validateActiveLesson(lesson);
+        StudentCourseLesson scl = userCourseLessonValidateService.validateCourseHasLesson(sc, lesson);
+
+        scl.setStatus(req.getStatus());
+        scl.setUpdatedDate(LocalDateTime.now());
+
+        StudentCourseLesson savedScl = userCourseLessonRepository.save(scl);
+
         UserStudyRes res = new UserStudyRes();
         res.setUserId(userId);
         res.setCourseId(courseId);
-        res.setStatus(status);
+        res.setLessonId(lessonId);
+        res.setStatus(req.getStatus());
+        res.setUpdatedDate(DateUtils.dateTimeToString(savedScl.getUpdatedDate()));
 
         return res;
     }

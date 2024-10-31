@@ -36,7 +36,7 @@ public class UserUpdateReq {
     private String password;
 
     @NotNull(message = "Status must not be null")
-    private String status;
+    private Integer status;
 
 
 }

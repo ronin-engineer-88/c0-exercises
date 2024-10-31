@@ -93,7 +93,7 @@ public class UserServiceImpl implements IUserService {
 
         Student user = userValidateService.validateLoginUsername(req.getUsername());
 
-        userValidateService.checkLoginPassword(user, req.getPassword());
+        requestValidateService.checkLoginPassword(user, req.getPassword());
 
         UserResponseDto res = new UserResponseDto();
         BeanUtils.copyProperties(user, res);
@@ -332,6 +332,7 @@ public class UserServiceImpl implements IUserService {
         Lesson lesson = lessonValidatorService.validateLessonExist(lessonId);
         lessonValidatorService.validateActiveLesson(lesson);
         StudentCourseLesson scl = userCourseLessonValidateService.validateCourseHasLesson(sc, lesson);
+        requestValidateService.checkStatusRequest(req.getStatus());
 
         scl.setStatus(req.getStatus());
         scl.setUpdatedDate(LocalDateTime.now());

@@ -34,19 +34,13 @@ public class UserValidateService {
                 .orElseThrow(() -> new UserNotFoundException("Incorrect username!"));
     }
 
-    public void checkLoginPassword(Student student, String password) {
-        if(!student.getPassword().equals(password))
-            throw new InvalidPasswordException("Incorrect password!");
-    }
-
     public Student validateUserExist(Long userId) {
         return userRepository.getStudentById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Not found student with id: " + userId));
     }
 
-
-    public void checkActiveUser(Student student) {
-        if(student.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+    public void checkActiveUser(Student user) {
+        if(user.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
             throw new UserInactiveException("User is now unavailable!");
     }
 

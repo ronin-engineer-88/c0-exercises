@@ -8,19 +8,19 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @Entity
-@Table(name = "student_course")
+@Table(name = "user_course")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentCourse {
+public class UserCourse {
 
     @EmbeddedId
-    private StudentCourseId id;
+    private UserCourseId id;
 
     @Column(name = "rating")
     private Integer rating;
@@ -33,16 +33,16 @@ public class StudentCourse {
 
     @Column(name = "created_date")
     @CreatedDate
-    private LocalDateTime createdDate;
+    private Date createdDate;
 
     @Column(name = "updated_date")
     @LastModifiedDate
-    private LocalDateTime updatedDate;
+    private Date updatedDate;
 
     @ManyToOne
-    @MapsId("studentId")
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @MapsId("courseId")

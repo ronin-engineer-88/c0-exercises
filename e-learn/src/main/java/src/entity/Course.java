@@ -27,9 +27,9 @@ public class Course extends BaseEntity {
     private String status;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StudentCourse> studentCourses = new ArrayList<>();
+    private List<UserCourse> userCourses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chapter> chapters = new ArrayList<>();
 
     @ManyToOne

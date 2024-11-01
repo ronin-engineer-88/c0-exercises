@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -36,9 +35,9 @@ public class Lesson extends BaseEntity {
     private Integer order;
 
     @ManyToOne
-    @JoinColumn(name = "chapter_id", nullable = false)
+    @JoinColumn(name = "chapter_id")
     private Chapter chapter;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
-    private List<StudentCourseLesson> studentCourseLessons;
+    private List<UserCourseLesson> userCourseLessons;
 }

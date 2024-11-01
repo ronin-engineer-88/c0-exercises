@@ -3,7 +3,6 @@ package src.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -28,9 +27,9 @@ public class Chapter extends BaseEntity {
     private Integer order;
 
     @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lesson> lessons;
 }

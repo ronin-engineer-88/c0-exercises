@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Date;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -21,45 +19,15 @@ import java.util.Date;
 
 public class LessonInfoRes {
 
-    private Long courseId;
+    private CourseResponseDto course;
 
-    private String courseName;
+    private ChapterResponseDto chapter;
 
-    private String courseDescription;
+    private LessonResDto lesson;
 
-    private String courseStatus;
+    private Integer numUserDone;
 
-    private Long chapterId;
-
-    private String chapterName;
-
-    private String chapterDescription;
-
-    private String chapterStatus;
-
-    private Integer chapterOrder;
-
-    private Long lessonId;
-
-    private String lessonName;
-
-    private String lessonDescription;
-
-    private String lessonStatus;
-
-    private String lessonType;
-
-    private String lessonUrl;
-
-    private Integer lessonOrder;
-
-    private Date createdDate;
-
-    private Date updatedDate;
-
-    private Integer numUserCompleted;
-
-    private Integer numUserInProgress;
+    private Integer numUserProcessing;
 
 
 

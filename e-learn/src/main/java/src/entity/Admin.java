@@ -13,18 +13,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Admin extends BaseEntity {
 
+    @Column(name = "status")
+    private String status;
+
     @Column(name = "username")
     private String username;
 
     @Column(name = "password")
     private String password;
 
-    @Column(name = "status")
-    private String status;
 
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
 
-    @Column(name = "updated_date")
-    private LocalDateTime updatedDate;
 }

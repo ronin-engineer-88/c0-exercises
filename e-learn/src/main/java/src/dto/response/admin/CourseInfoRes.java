@@ -21,17 +21,7 @@ import java.util.Date;
 
 public class CourseInfoRes {
 
-    private Long courseId;
-
-    private String name;
-
-    private String description;
-
-    private String status;
-
-    private Date createdDate;
-
-    private Date updatedDate;
+    private CourseResponseDto course;
 
     private Integer numChapter;
 

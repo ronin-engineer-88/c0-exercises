@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
-import src.dto.request.user.UserLoginReq;
+import src.dto.request.admin.AdminLoginReq;
 import src.service.IAdminService;
 
 @RestController
@@ -23,7 +23,7 @@ public class AdminController {
      * @return Thông tin đăng nhập Admin
      */
     @PostMapping(UrlConstant.LOGIN)
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginReq req) {
+    public ResponseEntity<?> login(@Valid @RequestBody AdminLoginReq req) {
         return ResponseEntity.ok(adminService.login(req));
     }
 

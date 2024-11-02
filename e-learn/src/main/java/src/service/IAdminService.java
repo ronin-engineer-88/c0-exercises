@@ -1,9 +1,11 @@
 package src.service;
 
+import src.dto.request.admin.AdminLoginReq;
 import src.dto.request.user.UserLoginReq;
+import src.entity.Admin;
 
 public interface IAdminService {
-    Object login(UserLoginReq req);
+    Object login(AdminLoginReq req);
     Object getUserInfo(Long userId);
     Object getUserCourseInfo(Long userId, Long courseId);
     Object getUserCourseLessonInfo(Long userId, Long courseId, Long lessonId);

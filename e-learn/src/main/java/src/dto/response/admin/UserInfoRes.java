@@ -21,8 +21,6 @@ import java.util.Date;
 
 public class UserInfoRes {
 
-    private Long userId;
-
     private String name;
 
     private String status;
@@ -33,9 +31,9 @@ public class UserInfoRes {
 
     private String password;
 
-    private Date createdDate;
+    private String createdDate;
 
-    private Date updatedDate;
+    private String updatedDate;
 
     private Integer numCourseRegister;
 }

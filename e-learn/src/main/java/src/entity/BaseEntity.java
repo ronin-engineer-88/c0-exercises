@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.io.Serializable;
 import java.util.Date;
 
+
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Data
@@ -24,9 +25,11 @@ public class BaseEntity implements Serializable {
 
     @Column(name = "created_date")
     @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
     @Column(name = "updated_date")
     @LastModifiedDate
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
 }

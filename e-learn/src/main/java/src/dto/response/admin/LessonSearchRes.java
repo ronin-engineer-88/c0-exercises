@@ -19,10 +19,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class LessonSearchRes {
+    private Long totalItems;
     private List<LessonResDto> lessons;
-    private long totalElements;
-    private int totalPages;
-    private String sort;
-    private int page;
-    private int pageSize;
 }

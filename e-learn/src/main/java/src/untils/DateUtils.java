@@ -1,29 +1,42 @@
-package src.util;
+package src.untils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.*;
 import java.util.Date;
-
 
 public class DateUtils {
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
-     * Chuyển từ chuỗi sang LocalDate.
+     * Chuyển từ chuỗi sang Date.
      *
-     * @param dateString chuỗi ngày theo định dạng yyyy-MM-dd
-     * @return LocalDate
+     * @param date chuỗi ngày theo định dạng yyyy-MM-dd
+     * @return Date
      */
-    public static LocalDate stringToDate(String dateString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-        return LocalDate.parse(dateString, formatter);
+    public static Date stringToDate(String date) {
+        if (date == null || date.trim().isEmpty()) return null;
+
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_FORMAT);
+        try {
+            return formatter.parse(date);
+        } catch (ParseException e) {
+            System.err.println("Error parsing date: " + e.getMessage());
+            return null;
+        }
     }
+
+    public static String formatDate(Date date) {
+        if (date == null) return null;
+
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_FORMAT);
+        return formatter.format(date);
+    }
+
 
     /**
      * Chuyển từ LocalDate sang chuỗi theo định dạng yyyy-MM-dd.
@@ -120,18 +133,5 @@ public class DateUtils {
      */
     public static LocalDate subtractDays(LocalDate date, long days) {
         return date.minusDays(days);
-    }
-
-    /**
-     * Chuyển đổi LocalDateTime thành Date.
-     *
-     * @param localDateTime đối tượng LocalDateTime cần chuyển đổi
-     * @return đối tượng Date tương ứng
-     */
-    public static Date convertToDate(LocalDateTime localDateTime) {
-        if (localDateTime == null) {
-            return null;
-        }
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

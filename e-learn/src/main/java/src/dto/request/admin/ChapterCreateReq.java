@@ -29,10 +29,8 @@ public class ChapterCreateReq {
     @Size(max = 1000, message = "Description must be less than 1000 characters.")
     private String description;
 
-    //@NotEmpty(message = "Chapter status is required")
     private String status;
 
-    @NotNull(message = "Chapter order is required")
     @Min(value = 1, message = "Order must be greater than 0.")
     private Integer order;
 }

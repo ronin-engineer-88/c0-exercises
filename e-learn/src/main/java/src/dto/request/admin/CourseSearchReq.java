@@ -8,7 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+import src.dto.response.admin.SortOption;
+
 import java.time.LocalDate;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,15 +24,17 @@ public class CourseSearchReq {
 
     private String name;
 
-    private String status;
+    private String status;          // ACTIVE || INACTIVE
 
     private String teacherName;
 
-    private LocalDate createdDateFrom;
+    private String createdDateFrom; // yyyy-MM-dd HH:mi:ss
 
-    private LocalDate createdDateTo;
+    private String createdDateTo;   // yyyy-MM-dd HH:mi:ss
 
-    private Double ratingFrom;
+    private Integer pageIndex;      // >= 0
 
-    private Double ratingTo;
+    private Integer pageSize;       // <= 1
+
+    private List<SortOption> sort;
 }

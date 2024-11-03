@@ -20,10 +20,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ChapterSearchRes {
+    private Long totalItems;
     private List<ChapterResponseDto> chapters;
-    private long totalElements;
-    private int totalPages;
-    private String sort;
-    private int page;
-    private int pageSize;
 }

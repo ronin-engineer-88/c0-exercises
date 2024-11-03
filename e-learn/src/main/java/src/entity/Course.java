@@ -26,10 +26,10 @@ public class Course extends BaseEntity {
     @Column(name = "status")
     private String status;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<UserCourse> userCourses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Chapter> chapters = new ArrayList<>();
 
     @ManyToOne

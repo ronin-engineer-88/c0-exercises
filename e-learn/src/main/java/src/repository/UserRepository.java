@@ -3,13 +3,13 @@ package src.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import src.entity.Student;
+import src.entity.User;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<Student, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT s " +
-            "FROM Student s " +
+            "FROM User s " +
             "WHERE s.id = :id")
-    Optional<Student> getStudentById(@Param("id") Long id);
+    Optional<User> getStudentById(@Param("id") Long id);
 }

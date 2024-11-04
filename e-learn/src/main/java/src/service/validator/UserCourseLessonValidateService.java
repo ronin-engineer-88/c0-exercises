@@ -16,7 +16,7 @@ public class UserCourseLessonValidateService {
         this.userCourseLessonRepository = userCourseLessonRepository;
     }
 
-    public StudentCourseLesson validateCourseHasLesson(StudentCourse sc, Lesson lesson) {
+    public UserCourseLesson validateCourseHasLesson(UserCourse sc, Lesson lesson) {
         return userCourseLessonRepository.getStudentCourseLesson(sc, lesson)
                 .orElseThrow(() -> new NoLessonInCourseException(
                         "Course with id: " + sc.getCourse().getId() +

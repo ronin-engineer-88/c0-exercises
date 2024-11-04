@@ -1,6 +1,5 @@
 package src.service.impl;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import src.constant.StatusConstant;
@@ -60,44 +59,27 @@ public class AdminServiceImpl implements IAdminService {
         Admin admin = adminValidateService.validateLoginUsername(req.getUsername());
         requestValidateService.checkLoginPassword(admin, req.getPassword());
 
-        AdminResponseDto res = new AdminResponseDto();
-        BeanUtils.copyProperties(admin, res);
-        res.setCreatedDate(DateUtils.dateTimeToString(admin.getCreatedDate()));
-        res.setUpdatedDate(
-                admin.getUpdatedDate() != null ? DateUtils.dateTimeToString(admin.getUpdatedDate()) : null
-        );
-
-        return res;
+        return AdminUtils.convertToResponseDto(admin);
     }
 
     @Override
-    public UserInfoRes getUserInfo(Long userId) {
+    public UserResponseDto getUserInfo(Long userId) {
 
-        Student user = userValidateService.validateUserExist(userId);
+        User user = userValidateService.validateUserExist(userId);
 
-        UserInfoRes res = new UserInfoRes();
-        BeanUtils.copyProperties(user, res);
-        res.setCreatedDate(DateUtils.dateTimeToString(user.getCreatedDate()));
-        res.setUpdatedDate(
-                user.getUpdatedDate() != null ? DateUtils.dateTimeToString(user.getUpdatedDate()) : null
-        );
-        res.setNumCourseRegister(user.getStudentCourses().size());
-
-        return res;
+        return UserUtils.Admin.convertToUserResponseDto(user);
     }
 
     public UserCourseInfoRes getUserCourseInfo(Long userId, Long courseId) {
 
-        Student user = userValidateService.validateUserExist(userId);
+        User user = userValidateService.validateUserExist(userId);
         Course course = courseValidateService.validateCourseExist(courseId);
-        StudentCourse sc = userCourseValidateService.validateUserEnrolledCourse(user, course);
-        List<StudentCourseLesson> studentCourseLessonList = userCourseLessonRepository.getListScl(sc);
+        UserCourse sc = userCourseValidateService.validateUserEnrolledCourse(user, course);
+        List<UserCourseLesson> userCourseLessonList = userCourseLessonRepository.getListUserCourseLesson(sc);
 
         UserCourseInfoRes res = new UserCourseInfoRes();
-        UserResponseDto userResponseDto = UserUtils.convertToUserResponseDto(user);
-        CourseResponseDto courseResponseDto = CourseUtils.convertToCourseResponseDto(course);
-        res.setUser(userResponseDto);
-        res.setCourse(courseResponseDto);
+        res.setUser(UserUtils.Admin.convertToUserResponseDto(user));
+        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(course));
         res.setRate(
                 sc.getRating() != null ? sc.getRating() : null
         );
@@ -108,10 +90,10 @@ public class AdminServiceImpl implements IAdminService {
         res.setUpdatedDate(
                 sc.getUpdatedDate() != null ? DateUtils.dateTimeToString(sc.getUpdatedDate()) : null
         );
-        res.setNumLessonProcessing((int) studentCourseLessonList.stream()
+        res.setNumLessonProcessing((int) userCourseLessonList.stream()
                 .filter(scl -> StatusConstant.PROCESSING.getValue().equals(scl.getStatus()))
                 .count());
-        res.setNumLessonDone((int) studentCourseLessonList.stream()
+        res.setNumLessonDone((int) userCourseLessonList.stream()
                 .filter(scl -> StatusConstant.DONE.getValue().equals(scl.getStatus()))
                 .count());
 
@@ -121,19 +103,16 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public UserCourseLessonInfoRes getUserCourseLessonInfo(Long userId, Long courseId, Long lessonId) {
 
-        Student user = userValidateService.validateUserExist(userId);
+        User user = userValidateService.validateUserExist(userId);
         Course course = courseValidateService.validateCourseExist(courseId);
-        StudentCourse sc = userCourseValidateService.validateUserEnrolledCourse(user, course);
+        UserCourse sc = userCourseValidateService.validateUserEnrolledCourse(user, course);
         Lesson lesson = lessonValidatorService.validateLessonExist(lessonId);
-        StudentCourseLesson scl = userCourseLessonValidateService.validateCourseHasLesson(sc, lesson);
+        UserCourseLesson scl = userCourseLessonValidateService.validateCourseHasLesson(sc, lesson);
 
         UserCourseLessonInfoRes res = new UserCourseLessonInfoRes();
-        UserResponseDto userResponseDto = UserUtils.convertToUserResponseDto(user);
-        CourseResponseDto courseResponseDto = CourseUtils.convertToCourseResponseDto(course);
-        LessonResDto lessonResDto = LessonUtils.convertToLessonResponseDto(lesson);
-        res.setUser(userResponseDto);
-        res.setCourse(courseResponseDto);
-        res.setLesson(lessonResDto);
+        res.setUser(UserUtils.Admin.convertToUserResponseDto(user));
+        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(course));
+        res.setLesson(LessonUtils.Admin.convertToLessonResponseDto(lesson));
         res.setStatus(scl.getStatus());
         res.setCreatedDate(DateUtils.dateTimeToString(scl.getCreatedDate()));
         res.setUpdatedDate(
@@ -148,8 +127,7 @@ public class AdminServiceImpl implements IAdminService {
 
         Teacher teacher = teacherValidateService.validateTeacherExist(teacherId);
         TeacherInfoRes res = new TeacherInfoRes();
-        TeacherResDto teacherResDto = TeacherUtils.convertToResponseDto(teacher);
-        res.setTeacher(teacherResDto);
+        res.setTeacher(TeacherUtils.Admin.convertToResponseDto(teacher));
         res.setNumCourseTeach(teacher.getCourses().size());
 
         return res;
@@ -161,13 +139,12 @@ public class AdminServiceImpl implements IAdminService {
         Course course = courseValidateService.validateCourseExist(courseId);
 
         CourseInfoRes res = new CourseInfoRes();
-        CourseResponseDto courseResponseDto = CourseUtils.convertToCourseResponseDto(course);
-        res.setCourse(courseResponseDto);
+        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(course));
         res.setNumChapter(course.getChapters().size());
         res.setNumLesson(course.getChapters().stream()
                 .mapToInt(ch -> ch.getLessons().size())
                 .sum());
-        res.setNumRegisterUser(course.getStudentCourses().size());
+        res.setNumRegisterUser(course.getUserCourses().size());
 
         return res;
     }
@@ -178,10 +155,8 @@ public class AdminServiceImpl implements IAdminService {
         Chapter chapter = chapterValidateService.validateChapterExist(chapterId);
 
         ChapterInfoRes res = new ChapterInfoRes();
-        ChapterResponseDto chapterResponseDto = ChapterUtils.convertToResponseDto(chapter);
-        CourseResponseDto courseResponseDto = CourseUtils.convertToCourseResponseDto(chapter.getCourse());
-        res.setChapter(chapterResponseDto);
-        res.setCourse(courseResponseDto);
+        res.setChapter(ChapterUtils.Admin.convertToResponseDto(chapter));
+        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(chapter.getCourse()));
         res.setNumLesson(chapter.getLessons().size());
 
         return res;
@@ -193,18 +168,15 @@ public class AdminServiceImpl implements IAdminService {
         Lesson lesson = lessonValidatorService.validateLessonExist(lessonId);
 
         LessonInfoRes res = new LessonInfoRes();
-        LessonResDto lessonResDto = LessonUtils.convertToLessonResponseDto(lesson);
-        ChapterResponseDto chapterResponseDto = ChapterUtils.convertToResponseDto(lesson.getChapter());
-        CourseResponseDto courseResponseDto = CourseUtils.convertToCourseResponseDto(lesson.getChapter().getCourse());
-        res.setCourse(courseResponseDto);
-        res.setChapter(chapterResponseDto);
-        res.setLesson(lessonResDto);
+        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(lesson.getChapter().getCourse()));
+        res.setChapter(ChapterUtils.Admin.convertToResponseDto(lesson.getChapter()));
+        res.setLesson(LessonUtils.Admin.convertToLessonResponseDto(lesson));
 
-        res.setNumUserProcessing((int) lesson.getStudentCourseLessons().stream()
+        res.setNumUserProcessing((int) lesson.getUserCourseLessons().stream()
                 .filter(scl -> StatusConstant.PROCESSING.getValue().equals(scl.getStatus()))
                 .count()
         );
-        res.setNumUserDone((int) lesson.getStudentCourseLessons().stream()
+        res.setNumUserDone((int) lesson.getUserCourseLessons().stream()
                 .filter(scl -> StatusConstant.DONE.getValue().equals(scl.getStatus()))
                 .count()
         );

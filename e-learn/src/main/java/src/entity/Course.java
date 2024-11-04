@@ -1,12 +1,12 @@
 package src.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,10 +27,10 @@ public class Course extends BaseEntity {
     private String status;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<StudentCourse> studentCourses;
+    private List<UserCourse> userCourses = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Chapter> chapters;
+    private List<Chapter> chapters = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")

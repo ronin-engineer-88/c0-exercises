@@ -18,7 +18,7 @@ public class ChapterValidateService {
 
     public Chapter validateChapterExist(Long chapterId) {
         return chapterRepository.getChapterById(chapterId)
-                .orElseThrow(() -> new ChapterNotFoundException("Not found course with id: " + chapterId));
+                .orElseThrow(() -> new ChapterNotFoundException("Not found chapter with id: " + chapterId));
     }
 
 }

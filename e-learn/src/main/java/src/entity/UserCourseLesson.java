@@ -7,26 +7,41 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import src.entity.CompositeKey.StudentCourseId;
+import src.entity.CompositeKey.UserCourseLessonId;
 
 import java.time.LocalDateTime;
 
+
 @Entity
-@Table(name = "student_course")
+@Table(name = "user_course_lesson")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentCourse {
+public class UserCourseLesson {
 
     @EmbeddedId
-    StudentCourseId studentCourseId;
+    private UserCourseLessonId id;
 
-    @Column(name = "rating")
-    private Integer rating;
+    @ManyToOne
+    @MapsId("userId")
+    private User user;
 
-    @Column(name = "review")
-    private String review;
+    @ManyToOne
+    @MapsId("courseId")
+    private Course course;
+
+    @ManyToOne
+    @MapsId("lessonId")
+    private Lesson lesson;
+
+    @ManyToOne
+    @MapsId("UserCourseId")
+    @JoinColumns({
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            @JoinColumn(name = "course_id", referencedColumnName = "course_id")
+    })
+    private UserCourse userCourse;
 
     @Column(name = "status")
     private String status;
@@ -39,13 +54,4 @@ public class StudentCourse {
     @LastModifiedDate
     private LocalDateTime updatedDate;
 
-    @ManyToOne
-    @MapsId("studentId")
-    @JoinColumn(name = "student_id")
-    private Student student;
-
-    @ManyToOne
-    @MapsId("courseId")
-    @JoinColumn(name = "course_id")
-    private Course course;
 }

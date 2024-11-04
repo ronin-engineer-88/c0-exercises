@@ -2,7 +2,7 @@ package src.service.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import src.entity.Student;
+import src.entity.User;
 import src.exception.UserException.UserNotFoundException;
 import src.repository.UserRepository;
 
@@ -16,7 +16,7 @@ public class UserValidateService {
         this.userRepository = userRepository;
     }
 
-    public Student validateUserExist(Long userId) {
+    public User validateUserExist(Long userId) {
         return userRepository.getStudentById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Not found student with id: " + userId));
     }

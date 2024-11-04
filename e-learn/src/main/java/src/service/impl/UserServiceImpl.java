@@ -29,7 +29,6 @@ import src.util.UserUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 @Service
@@ -107,7 +106,7 @@ public class UserServiceImpl implements IUserService {
         savedUser.setFullName(savedFullname);
         savedUser = userRepository.save(savedUser);
 
-        return UserUtils.convertToDto(savedUser);
+        return UserUtils.convertToResponseDto(savedUser);
     }
 
     @Override
@@ -117,7 +116,7 @@ public class UserServiceImpl implements IUserService {
 
         requestValidateService.checkLoginPassword(user, req.getPassword());
 
-        return UserUtils.convertToDto(user);
+        return UserUtils.convertToResponseDto(user);
     }
 
     @Override
@@ -147,7 +146,7 @@ public class UserServiceImpl implements IUserService {
         user.setUpdatedDate(LocalDateTime.now());
         User updateUser = userRepository.save(user);
 
-        return UserUtils.convertToDto(updateUser);
+        return UserUtils.convertToResponseDto(updateUser);
     }
 
     @Override
@@ -185,7 +184,7 @@ public class UserServiceImpl implements IUserService {
         );
         //
         List<UserResponseDto> listUserRes = userPage.getContent().stream()
-                .map(UserUtils::convertToDto)
+                .map(UserUtils::convertToResponseDto)
                 .toList();
         //
         UserSearchRes res = new UserSearchRes();
@@ -300,7 +299,7 @@ public class UserServiceImpl implements IUserService {
 
         Course course = courseValidateService.validateCourseExist(courseId);
 
-        return CourseUtils.convertToDto(course);
+        return CourseUtils.User.convertToResponseDto(course);
     }
 
     @Override
@@ -328,9 +327,8 @@ public class UserServiceImpl implements IUserService {
         );
 
         List<Course> courses = coursePage.getContent();
-        List<CourseRegisterSearchResponse> listCourseRegisterRes = courses.stream().map(course -> {
-            return CourseUtils.convertToDTO(req.getUserId(), course);
-        })
+        List<CourseRegisterSearchResponse> listCourseRegisterRes = courses.stream()
+                .map(course -> CourseUtils.User.convertToResponseDto(req.getUserId(), course))
                 .toList();
 
         UserSearchCourseRes res = new UserSearchCourseRes();

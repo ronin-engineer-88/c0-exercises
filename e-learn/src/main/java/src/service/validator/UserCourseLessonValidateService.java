@@ -2,6 +2,7 @@ package src.service.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import src.constant.StatusConstant;
 import src.entity.*;
 import src.exception.LessonException.NoLessonInCourseException;
 import src.repository.UserCourseLessonRepository;
@@ -16,12 +17,21 @@ public class UserCourseLessonValidateService {
         this.userCourseLessonRepository = userCourseLessonRepository;
     }
 
-    public StudentCourseLesson validateCourseHasLesson(StudentCourse sc, Lesson lesson) {
-        return userCourseLessonRepository.getStudentCourseLesson(sc, lesson)
+    public UserCourseLesson validateRecordExist(UserCourse uc, Lesson lesson) {
+        return userCourseLessonRepository.getStudentCourseLesson(uc, lesson)
                 .orElseThrow(() -> new NoLessonInCourseException(
-                        "Course with id: " + sc.getCourse().getId() +
-                        " does not have lesson with id: " + lesson.getId()));
+                        "Record with user id: " + uc.getUser().getId() +
+                        " and course id: " + uc.getCourse().getId() +
+                        " and lesson id: " + lesson.getId() +
+                        " does not exist!"));
 
     }
+
+    public boolean checkIfCompleteAllLesson(UserCourse uc) {
+
+        return userCourseLessonRepository.getListStudentCourseLesson(uc).stream()
+                .allMatch(ucl -> StatusConstant.DONE.getValue().equals(ucl.getStatus()));
+    }
+
 
 }

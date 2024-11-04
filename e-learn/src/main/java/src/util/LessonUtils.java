@@ -1,13 +1,13 @@
 package src.util;
 
-import src.dto.response.user.CourseDetailResponse.LessonDetailDto;
+import src.dto.response.user.DetailResponse.LessonResponseDto;
 import src.entity.Lesson;
 
 public class LessonUtils {
 
-    public static LessonDetailDto convertToDetailDto(Lesson lesson) {
+    public static LessonResponseDto convertToDto(Lesson lesson) {
 
-        LessonDetailDto lessonDto = new LessonDetailDto();
+        LessonResponseDto lessonDto = new LessonResponseDto();
         lessonDto.setName(lesson.getName());
         lessonDto.setDescription(lesson.getDescription());
         lessonDto.setType(lesson.getType());

@@ -10,6 +10,7 @@ import src.entity.Course;
 import src.service.IUserService;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(UrlConstant.API_V1)
@@ -82,23 +83,15 @@ public class UserController {
     /**
      * Lấy danh sách users với phân trang và sắp xếp.
      *
-     * @param page trang hiện tại
-     * @param pageSize số lượng bản ghi trên mỗi trang
-     * @param sort tiêu chí sắp xếp
      * @param req tiêu chí tìm kiếm người dùng
      * @return danh sách người dùng phù hợp với tiêu chí tìm kiếm
      */
     @GetMapping(UrlConstant.GET_USERS)
-    public ResponseEntity<?> getUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "createdDate") String sort,
-            @RequestBody(required = false) UserSearchReq req) {
+    public ResponseEntity<?> getUsers(@RequestBody(required = false) UserSearchReq req) {
 
-        if(req == null)
-            req = new UserSearchReq();
+        req = Objects.requireNonNullElse(req, new UserSearchReq());
 
-        return ResponseEntity.ok(userService.getUsers(page, pageSize, sort, req));
+        return ResponseEntity.ok(userService.getUsers(req));
     }
 
 
@@ -180,25 +173,16 @@ public class UserController {
      *   + Search theo status
      *   + Search theo số lượng bài học của khóa
      *
-     * @param userId ID của người dùng đăng ký
      * @param req Thông tin tìm kiếm khóa học
-     * @param pageSize Số lượng bản ghi trên mỗi trang
-     * @param page Trang hiện tại
-     * @param sort Tiêu chí sắp xếp
      * @return Kết quả tìm kiếm khóa học
      */
     @GetMapping(UrlConstant.USER_SEARCH_REGISTERED_COURSE)
     public ResponseEntity<?> searchRegisteredCourse(
-            @PathVariable("user_id") Long userId,
-            @RequestBody (required = false) UserSearchCourseReq req,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(defaultValue = "createdDate") String sort) {
+            @RequestBody(required = false) UserSearchCourseReq req) {
 
-        if(req == null)
-            req = new UserSearchCourseReq();
+        req = Objects.requireNonNullElse(req, new UserSearchCourseReq());
 
-        return ResponseEntity.ok(userService.getRegisterCourse(userId, req, page, pageSize, sort));
+        return ResponseEntity.ok(userService.getRegisterCourse(req));
     }
 
 

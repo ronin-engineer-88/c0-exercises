@@ -1,19 +1,20 @@
 package src.dto.request.user;
 
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import src.entity.Teacher;
+import src.dto.SortOption;
+
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +25,9 @@ import java.util.Date;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
 public class UserSearchCourseReq {
+
+    @Min(value = 1, message = "User ID must be a positive number.")
+    private Long userId;
 
     private String name;
 
@@ -40,5 +44,11 @@ public class UserSearchCourseReq {
     private Double ratingTo;
 
     private Integer numLessons;
+
+    private Integer pageIndex;
+
+    private Integer pageSize;
+
+    private List<SortOption> sort;
 
 }

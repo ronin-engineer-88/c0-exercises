@@ -2,22 +2,20 @@ package src.entity.CompositeKey;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-
-@Embeddable
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentCourseId implements Serializable {
+@Embeddable
+public class UserCourseId implements Serializable {
 
-    @Column(name = "student_id")
-    private Long studentId;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "course_id")
     private Long courseId;
 }
-

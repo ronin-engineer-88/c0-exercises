@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -22,12 +24,16 @@ import lombok.experimental.SuperBuilder;
 
 public class UserUpdateReq {
 
-    @NotBlank(message = "Name must not be blank.")
-    @Size(max = 50, message = "Name must not exceed 50 characters.")
-    private String name;
+    @Size(max = 255, message = "First Name must not exceed 255 characters.")
+    private String firstName;
 
-    @NotNull(message = "Age must not be null")
-    private Integer age;
+    @Size(max = 255, message = "Middle name must not exceed 255 characters.")
+    private String midName;
+
+    @Size(max = 255, message = "Last name must not exceed 255 characters.")
+    private String lastName;
+
+    private List<AddressRequest> addressUpdateRequests;
 
     @Size(max = 50, message = "Username must not exceed 50 characters.")
     private String username;
@@ -35,8 +41,11 @@ public class UserUpdateReq {
     @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters.")
     private String password;
 
-    @NotNull(message = "Status must not be null")
+    @Size(max = 255, message = "Nick name must not exceed 50 characters.")
+    private String nickname;
+
     private Integer status;
+
 
 
 }

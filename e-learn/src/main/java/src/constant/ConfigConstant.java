@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ConfigConstant {
 
-    ACTIVE("active", 1),
-    INACTIVE("inactive", 0);
+    ACTIVE("ACTIVE", 1),
+    INACTIVE("INACTIVE", 0);
 
     private final String value;
     private final int code;

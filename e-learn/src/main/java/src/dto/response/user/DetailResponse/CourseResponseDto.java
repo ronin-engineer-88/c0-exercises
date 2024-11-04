@@ -1,4 +1,4 @@
-package src.dto.response.user.CourseDetailResponse;
+package src.dto.response.user.DetailResponse;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -19,7 +19,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
-public class CourseDetailDto {
+public class CourseResponseDto {
 
     private String name;
 
@@ -27,24 +27,27 @@ public class CourseDetailDto {
 
     private String status;
 
-    private List<ChapterDetailDto> chapters;
+    private TeacherResponseDto teacher;
 
-    private TeacherDetailDto teacher;
+    private List<ChapterResponseDto> chapters;
 
     private Integer numChapter;
 
     private Integer numLesson;
 
-    public CourseDetailDto(String name, String description, String status, List<ChapterDetailDto> chapters, TeacherDetailDto teacher) {
+    private String createdDate;
+
+    private String updatedDate;
+
+    public CourseResponseDto(String name, String description, String status, List<ChapterResponseDto> chapters, TeacherResponseDto teacher) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.chapters = chapters;
         this.teacher = teacher;
         this.numChapter = chapters.size();
-        this.numLesson = 0;
-        for(int i = 0; i < chapters.size(); i++) {
-            this.numLesson += chapters.get(0).lessons.size();
-        }
+        this.numLesson = chapters.stream()
+                .mapToInt(ch -> ch.lessons.size())
+                .sum();
     }
 }

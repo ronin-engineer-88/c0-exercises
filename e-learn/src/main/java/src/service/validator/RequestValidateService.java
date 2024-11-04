@@ -3,14 +3,14 @@ package src.service.validator;
 import org.springframework.stereotype.Service;
 import src.constant.ConfigConstant;
 import src.constant.StatusConstant;
-import src.entity.Student;
+import src.entity.User;
 import src.exception.UserException.InvalidPasswordException;
 
 import java.util.Objects;
 
 @Service
 public class RequestValidateService {
-    public void checkLoginPassword(Student user, String password) {
+    public void checkLoginPassword(User user, String password) {
         if(!user.getPassword().equals(password))
             throw new InvalidPasswordException("Incorrect password!");
     }

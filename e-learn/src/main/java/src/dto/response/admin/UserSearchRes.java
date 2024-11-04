@@ -1,6 +1,5 @@
 package src.dto.response.admin;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -9,9 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import src.dto.response.user.UserResponseDto;
+import src.dto.response.user.DetailResponse.UserResponseDto;
 
-import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
@@ -23,15 +21,8 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserSearchRes {
 
-    private List<UserResponseDto> students;
+    private List<UserResponseDto> users;
 
-    private Long totalElements;
-
-    private Integer totalPage;
-
-    private String sort;
-
-    private Integer page;
-
-    private Integer pageSize;
+    private Long totalItems;
+    
 }

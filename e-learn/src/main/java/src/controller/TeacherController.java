@@ -73,8 +73,6 @@ public class TeacherController {
      */
     @GetMapping(UrlConstant.GET_TEACHERS)
     public TeacherSearchRes getTeachers(@RequestBody(required = false) TeacherSearchReq req) {
-        req = Objects.requireNonNullElse(req, new TeacherSearchReq());
-
         return teacherService.getTeachers(req);
     }
 }

@@ -84,8 +84,6 @@ public class ChapterController {
      */
     @GetMapping(UrlConstant.GET_CHAPTERS)
     public ChapterSearchRes getChapters(@RequestBody(required = false) ChapterSearchReq req) {
-        req = Objects.requireNonNullElse(req, new ChapterSearchReq());
-
         return chapterService.getChapters(req);
     }
 }

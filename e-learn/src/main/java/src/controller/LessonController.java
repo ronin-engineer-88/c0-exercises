@@ -88,8 +88,6 @@ public class LessonController {
      */
     @GetMapping(UrlConstant.GET_LESSONS)
     public LessonSearchRes getLessons(@RequestBody(required = false) LessonSearchReq req) {
-        req = Objects.requireNonNullElse(req, new LessonSearchReq());
-
         return lessonService.getLessons(req);
     }
 }

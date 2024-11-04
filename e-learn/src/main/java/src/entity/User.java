@@ -33,7 +33,6 @@ public class User extends BaseEntity {
     private String email;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "fullname_id")
     private FullName fullName;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

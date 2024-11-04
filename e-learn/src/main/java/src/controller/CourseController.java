@@ -73,8 +73,6 @@ public class CourseController {
      */
     @GetMapping(UrlConstant.GET_COURSES)
     public CourseSearchRes getCourses(@RequestBody(required = false) CourseSearchReq courseReq) {
-        courseReq = Objects.requireNonNullElse(courseReq, new CourseSearchReq());
-
         return courseService.getCourses(courseReq);
     }
 }

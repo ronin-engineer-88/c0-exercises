@@ -22,8 +22,8 @@ import src.repository.ChapterRepository;
 import src.repository.CourseRepository;
 import src.repository.LessonRepository;
 import src.service.ILessonService;
-import src.untils.DateUtils;
-import src.untils.PageableUtils;
+import src.utils.DateUtils;
+import src.utils.PageableUtils;
 import src.utils.ValidateUtils;
 
 import java.util.Date;

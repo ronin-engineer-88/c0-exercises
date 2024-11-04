@@ -21,8 +21,8 @@ import src.exception.AppException;
 import src.repository.CourseRepository;
 import src.repository.TeacherRepository;
 import src.service.ICourseService;
-import src.untils.DateUtils;
-import src.untils.PageableUtils;
+import src.utils.DateUtils;
+import src.utils.PageableUtils;
 
 import java.util.Date;
 import java.util.List;

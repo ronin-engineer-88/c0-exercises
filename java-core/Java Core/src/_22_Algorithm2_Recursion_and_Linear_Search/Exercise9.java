@@ -1,4 +1,4 @@
-package _22_Recursion;
+package _22_Algorithm2_Recursion_and_Linear_Search;
 
 import java.util.Scanner;
 

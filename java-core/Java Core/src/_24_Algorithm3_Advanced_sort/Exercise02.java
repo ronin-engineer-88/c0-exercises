@@ -1,0 +1,35 @@
+package _24_Algorithm3_Advanced_sort;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Exercise02 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int k = scanner.nextInt();
+
+        int[] arr = new int[n];
+        for(int i = 0; i < n; i++){
+            arr[i] = scanner.nextInt();
+        }
+
+        System.out.println(findx(arr, k));
+    }
+
+    private static int findx(int[] arr, int k) {
+        Arrays.sort(arr);
+
+        if(k == 0){
+            if(arr[0] > 1)
+                return 1;
+        } else if (k <= arr.length){
+            if(k == arr.length || arr[k] != arr[k-1])
+                return arr[k-1];
+        }
+
+        return -1;
+    }
+}
+
+

@@ -1,4 +1,4 @@
-package _22_Recursion;
+package _22_Algorithm2_Recursion_and_Linear_Search;
 
 public class Exercise10 {
     public static void main(String[] args) {

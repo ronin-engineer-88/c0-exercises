@@ -19,7 +19,7 @@ import src.exception.UserException.UserNotFoundException;
 import src.exception.UserException.UserNotYetEnrolledException;
 import src.repository.*;
 import src.service.IAdminService;
-import src.util.*;
+import src.utils.*;
 
 import java.util.List;
 

@@ -2,15 +2,13 @@ package src.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
 import src.dto.request.user.*;
-import src.entity.Course;
 import src.service.IUserService;
 
-import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping(UrlConstant.API_V1)
@@ -19,10 +17,9 @@ public class UserController {
 
     // Using setter injection
     @Autowired
-    public void setUserService(IUserService userService) {
+    public void setUserService(@Qualifier("userServiceImpl") IUserService userService) {
         this.userService = userService;
     }
-
 
     /**
      * User Đăng ký

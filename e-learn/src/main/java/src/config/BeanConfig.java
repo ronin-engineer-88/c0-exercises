@@ -16,8 +16,8 @@ public class BeanConfig {
 //        return new UserServiceImpl();
 //    }
 
-    @Bean
-    public IAdminService adminService() {
-        return new AdminServiceImpl();
-    }
+//    @Bean
+//    public IAdminService adminService() {
+//        return new AdminServiceImpl();
+//    }
 }

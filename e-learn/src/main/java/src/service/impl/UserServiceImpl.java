@@ -25,7 +25,7 @@ import src.exception.RequestException;
 import src.exception.UserException.*;
 import src.repository.*;
 import src.service.IUserService;
-import src.util.*;
+import src.utils.*;
 
 
 import java.util.ArrayList;
@@ -361,8 +361,13 @@ public class UserServiceImpl implements IUserService {
         //
         UserCourseLesson savedUcl = userCourseLessonRepository.save(ucl);
         //
-        if (checkIfCompleteAllLesson(savedUcl.getUserCourse())) {
+        if (checkIfCompleteAllLesson(savedUcl.getUserCourse())
+                && !savedUcl.getUserCourse().getStatus().equals(StatusConstant.DONE.getValue())) {
             savedUcl.getUserCourse().setStatus(StatusConstant.DONE.getValue());
+            userCourseRepository.save(ucl.getUserCourse());
+        } else if (checkIfUserProcessingCourse(savedUcl.getUserCourse())
+                && !savedUcl.getUserCourse().getStatus().equals(StatusConstant.PROCESSING.getValue())) {
+            savedUcl.getUserCourse().setStatus(StatusConstant.PROCESSING.getValue());
             userCourseRepository.save(ucl.getUserCourse());
         }
             UserStudyRes res = new UserStudyRes();
@@ -433,6 +438,11 @@ public class UserServiceImpl implements IUserService {
     private boolean checkIfCompleteAllLesson(UserCourse uc) {
         return userCourseLessonRepository.getListUserCourseLesson(uc).stream()
                 .allMatch(ucl -> StatusConstant.DONE.getValue().equals(ucl.getStatus()));
+    }
+
+    private boolean checkIfUserProcessingCourse(UserCourse uc) {
+        return !userCourseLessonRepository.getListUserCourseLesson(uc).stream()
+                .allMatch(ucl -> StatusConstant.START.getValue().equals(ucl.getStatus()));
     }
 
     private void checkConfigStatusRequest(Integer status) {

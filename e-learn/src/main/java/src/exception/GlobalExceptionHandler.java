@@ -1,18 +1,12 @@
 package src.exception;
 
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import src.dto.AppError;
-import src.exception.CourseException.CourseInactiveException;
-import src.exception.CourseException.CourseNotFoundException;
-import src.exception.LessonException.LessonNotFoundException;
-import src.exception.LessonException.NoLessonInCourseException;
-import src.exception.UserException.*;
-import src.util.DateUtils;
+import src.utils.DateUtils;
 
 import java.util.Date;
 import java.util.List;

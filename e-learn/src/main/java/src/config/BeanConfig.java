@@ -9,8 +9,8 @@ import src.service.impl.UserServiceImpl;
 @Configuration
 public class BeanConfig {
 
-    @Bean
-    public IUserService userService() {
-        return new UserServiceImpl();
-    }
+//    @Bean
+//    public IUserService userService() {
+//        return new UserServiceImpl();
+//    }
 }

@@ -2,6 +2,7 @@ package src.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
@@ -12,8 +13,9 @@ import src.service.IAdminService;
 @RequestMapping(UrlConstant.API_V1 + "/admins")
 public class AdminController {
 
-    // Using field injection
+    // Using constructor injection
     @Autowired
+    @Qualifier("adminServiceImpl")
     private IAdminService adminService;
 
     /**

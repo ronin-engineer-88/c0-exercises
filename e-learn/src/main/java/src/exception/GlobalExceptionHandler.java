@@ -12,6 +12,7 @@ import src.exception.CourseException.CourseNotFoundException;
 import src.exception.LessonException.LessonNotFoundException;
 import src.exception.LessonException.NoLessonInCourseException;
 import src.exception.UserException.*;
+import src.util.DateUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -29,10 +30,11 @@ public class GlobalExceptionHandler {
                                             error instanceof FieldError ? ((FieldError) error).getField() : null
                                     );
                                     err.setMessage(error.getDefaultMessage());
-                                    err.setDate(new Date());
+                                    err.setDate(DateUtils.formatDateTime(new Date()));
                                     return err;
                                 })
                                 .collect(Collectors.toList());
+
         return ResponseEntity.badRequest().body(errors);
     }
 
@@ -43,7 +45,7 @@ public class GlobalExceptionHandler {
                 ex.getField() != null ? ex.getField() : null
         );
         err.setMessage(ex.getMessage());
-        err.setDate(ex.getDate());
+        err.setDate(DateUtils.formatDateTime(ex.getDate()));
 
         return ResponseEntity.badRequest().body(err);
     }

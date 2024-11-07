@@ -14,32 +14,32 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("SELECT s " +
-            "FROM User s " +
-            "WHERE s.username = :username")
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE u.username = :username")
     Optional<User> findUserByUsername(@Param("username") String username);
 
-    @Query("SELECT s " +
-            "FROM User s " +
-            "WHERE s.username = :username " +
-            "AND s.status = 'active'")
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE u.username = :username " +
+            "AND u.status = 'active'")
     Optional<User> findActiveUserByUsername(@Param("username") String username);
 
-    @Query("SELECT s " +
-            "FROM User s " +
-            "WHERE s.id = :id")
-    Optional<User> getStudentById(@Param("id") Long id);
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE u.id = :id")
+    Optional<User> getUserById(@Param("id") Long id);
 
-    @Query("SELECT s FROM User s " +
-            "WHERE (:name IS NULL OR s.fullName.firstName LIKE CONCAT('%', :name, '%') " +
-            "                     OR s.fullName.midName LIKE CONCAT('%', :name, '%') " +
-            "                     OR s.fullName.lastName LIKE CONCAT('%', :name, '%')) " +
+    @Query("SELECT u FROM User u " +
+            "WHERE (:name IS NULL OR u.fullName.firstName LIKE CONCAT('%', :name, '%') " +
+            "                     OR u.fullName.midName LIKE CONCAT('%', :name, '%') " +
+            "                     OR u.fullName.lastName LIKE CONCAT('%', :name, '%')) " +
 //            "AND (:age IS NULL OR s.age = :age) " +
-            "AND (:username IS NULL OR s.username = :username) " +
-            "AND (:status IS NULL OR s.status = :status) " +
-            "AND (:createdDateFrom IS NULL OR s.createdDate >= :createdDateFrom) " +
-            "AND (:createdDateTo IS NULL OR s.createdDate <= :createdDateTo)")
-    Page<User> findStudents(
+            "AND (:username IS NULL OR u.username = :username) " +
+            "AND (:status IS NULL OR u.status = :status) " +
+            "AND (:createdDateFrom IS NULL OR u.createdDate >= :createdDateFrom) " +
+            "AND (:createdDateTo IS NULL OR u.createdDate <= :createdDateTo)")
+    Page<User> findUsers(
             @Param("name") String name,
 //            @Param("age") Integer age,
             @Param("username") String username,

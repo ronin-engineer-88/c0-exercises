@@ -25,6 +25,6 @@ public class AppError {
 
     private String field;
 
-    private Date date;
+    private String date;
 
 }

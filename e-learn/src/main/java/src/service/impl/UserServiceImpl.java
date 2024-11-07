@@ -17,7 +17,6 @@ import src.dto.response.user.*;
 import src.dto.response.user.DetailResponse.*;
 import src.entity.*;
 import src.entity.CompositeKey.*;
-import src.exception.AppException;
 import src.exception.CourseException.CourseInactiveException;
 import src.exception.CourseException.CourseNotFoundException;
 import src.exception.LessonException.LessonNotFoundException;
@@ -173,7 +172,7 @@ public class UserServiceImpl implements IUserService {
         Sort sort = PageableUtils.determineSort(req.getSort());
         Pageable pageable = PageRequest.of(req.getPageIndex(), req.getPageSize(), sort);
         //
-        Page<User> userPage = userRepository.findStudents(
+        Page<User> userPage = userRepository.findUsers(
                 req.getName(),
                 req.getUsername(),
                 req.getStatus(),
@@ -351,7 +350,7 @@ public class UserServiceImpl implements IUserService {
         // Validate status request
         checkStatusRequest(req.getStatus());
         //
-        UserCourseLesson ucl = userCourseLessonRepository.getStudentCourseLesson(uc, lesson)
+        UserCourseLesson ucl = userCourseLessonRepository.getUserCourseLesson(uc, lesson)
                 .orElseThrow(() -> new NoLessonInCourseException(
                         "Record with user id: " + uc.getUser().getId() +
                                 " and course id: " + uc.getCourse().getId() +
@@ -377,7 +376,7 @@ public class UserServiceImpl implements IUserService {
         }
 
     private User validateUserExist(Long userId) {
-        return userRepository.getStudentById(userId)
+        return userRepository.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Not found student with id: " + userId));
     }
 
@@ -432,7 +431,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     private boolean checkIfCompleteAllLesson(UserCourse uc) {
-        return userCourseLessonRepository.getListStudentCourseLesson(uc).stream()
+        return userCourseLessonRepository.getListUserCourseLesson(uc).stream()
                 .allMatch(ucl -> StatusConstant.DONE.getValue().equals(ucl.getStatus()));
     }
 

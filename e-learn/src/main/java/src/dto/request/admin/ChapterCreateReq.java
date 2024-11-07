@@ -23,16 +23,14 @@ import lombok.experimental.SuperBuilder;
 public class ChapterCreateReq {
 
     @NotEmpty(message = "Chapter name is required.")
-    @Size(max = 50, message = "Chapter name must be less than 50 characters.")
+    @Size(max = 255, message = "Chapter name must be less than 255 characters.")
     private String name;
 
-    @Size(max = 255, message = "Description must be less than 255 characters.")
+    @Size(max = 1000, message = "Description must be less than 1000 characters.")
     private String description;
 
-    @NotEmpty(message = "Status is required.")
     private String status;
 
-    @NotNull(message = "Order is required.")
     @Min(value = 1, message = "Order must be greater than 0.")
     private Integer order;
 }

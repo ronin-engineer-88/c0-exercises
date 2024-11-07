@@ -6,7 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import src.dto.AppError;
-import src.util.DateUtils;
+import src.utils.DateUtils;
 
 import java.util.Date;
 import java.util.List;

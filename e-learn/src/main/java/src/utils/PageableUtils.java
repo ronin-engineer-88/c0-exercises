@@ -1,4 +1,4 @@
-package src.util;
+package src.utils;
 
 import org.springframework.data.domain.Sort;
 import src.dto.SortOption;
@@ -22,4 +22,6 @@ public class PageableUtils {
         }
         return sort;
     }
+
 }
+

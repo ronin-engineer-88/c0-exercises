@@ -30,7 +30,4 @@ public class LessonInfoRes {
     private Integer numUserProcessing;
 
 
-
-
-
 }

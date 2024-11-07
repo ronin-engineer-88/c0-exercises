@@ -3,10 +3,7 @@ package src.dto.request.admin;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,25 +19,20 @@ import lombok.experimental.SuperBuilder;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class LessonUpdateReq {
 
-    @NotBlank(message = "Name is required.")
-    @Size(max = 255, message = "Name must not exceed 255 characters.")
+    @Size(max = 50, message = "Name must not exceed 50 characters.")
     private String name;
 
     @Size(max = 1000, message = "Description must not exceed 1000 characters.")
     private String description;
 
-    @NotBlank(message = "Status is required.")
-    @Size(max = 50, message = "Status must not exceed 50 characters.")
-    private String status;
+    private Integer status;   // 0 or 1
 
-    @NotBlank(message = "Type is required.")
     @Size(max = 50, message = "Type must not exceed 50 characters.")
     private String type;
 
-    @Size(max = 50, message = "URL must not exceed 50 characters.")
+    @Size(max = 255, message = "URL must not exceed 255 characters.")
     private String url;
 
-    @NotNull(message = "Order is required.")
     @Min(value = 1, message = "Order must be greater than or equal to 1.")
     private Integer order;
 

@@ -17,4 +17,6 @@ public class AppException extends RuntimeException {
         this.message = message;
         date = new Date();
     }
+
 }
+

@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -24,4 +25,6 @@ public class ChapterResponseDto {
     private Long courseId;
     private String createdDate;
     private String updatedDate;
+
 }
+

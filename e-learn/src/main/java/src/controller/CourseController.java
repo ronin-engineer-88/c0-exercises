@@ -2,15 +2,17 @@ package src.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
 import src.dto.request.admin.CourseCreateReq;
 import src.dto.request.admin.CourseSearchReq;
 import src.dto.request.admin.CourseUpdateReq;
+import src.dto.response.admin.CourseResponseDto;
 import src.dto.response.admin.CourseSearchRes;
 import src.entity.Course;
 import src.service.ICourseService;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping(UrlConstant.API_V1)
@@ -23,13 +25,13 @@ public class CourseController {
      * Tạo mới một khóa học.
      *
      * @param req đối tượng {@link CourseCreateReq} chứa thông tin course cần tạo.
-     * @return một ResponseEntity chứa đối tượng {@link Course} đã được tạo.
+     * @return một CourseResponseDto chứa đối tượng {@link Course} đã được tạo.
      * @see ICourseService#createCourse(CourseCreateReq)
      */
     @PostMapping(UrlConstant.ADD_COURSES)
-    public ResponseEntity<?> addCourse(@Valid @RequestBody CourseCreateReq req) {
-        Course createdCourse = courseService.createCourse(req);
-        return ResponseEntity.ok(createdCourse);
+    public CourseResponseDto addCourse(@Valid @RequestBody CourseCreateReq req) {
+        CourseResponseDto createdCourse = courseService.createCourse(req);
+        return createdCourse;
     }
 
     /**
@@ -37,14 +39,14 @@ public class CourseController {
      *
      * @param courseId ID của khóa học cần cập nhật.
      * @param req      đối tượng {@link CourseUpdateReq} chứa thông tin update cho khóa học.
-     * @return         ResponseEntity chứa đối tượng {@link Course} đã được cập nhật.
+     * @return         CourseResponseDto chứa đối tượng {@link Course} đã được cập nhật.
      * @see ICourseService#updateCourse(Long, CourseUpdateReq)
      */
     @PutMapping(UrlConstant.UPDATE_COURSES)
-    public ResponseEntity<?> updateCourse(@PathVariable("course_id") Long courseId,
+    public CourseResponseDto updateCourse(@PathVariable("course_id") Long courseId,
                                           @Valid @RequestBody CourseUpdateReq req) {
-        Course updatedCourse = courseService.updateCourse(courseId, req);
-        return ResponseEntity.ok(updatedCourse);
+        CourseResponseDto updatedCourse = courseService.updateCourse(courseId, req);
+        return updatedCourse;
     }
 
     /**
@@ -55,9 +57,8 @@ public class CourseController {
      * @see ICourseService#softDeleteCourse(Long)
      */
     @DeleteMapping(UrlConstant.DELETE_COURSES)
-    public ResponseEntity<?> softDeleteCourse(@PathVariable("course_id") Long courseId) {
+    public void softDeleteCourse(@PathVariable("course_id") Long courseId) {
         courseService.softDeleteCourse(courseId);
-        return ResponseEntity.ok("Course soft deleted successfully.");
     }
 
     /**
@@ -66,23 +67,13 @@ public class CourseController {
      * Các tiêu chí tìm kiếm bao gồm các field như tên khóa học, trạng thái, tên giáo viên và khoảng thời gian.
      * </p>
      *
-     * @param page        số trang cần lấy, mặc định là 0.
-     * @param pageSize    số lượng bản ghi trên mỗi trang, mặc định là 10.
-     * @param sort        trường -> kết quả sẽ được sắp xếp, mặc định là "created_date".
-     * @param req         đối tượng {@link CourseSearchReq} chứa các bộ lọc tìm kiếm.
+     * @param courseReq         đối tượng {@link CourseSearchReq} chứa các bộ lọc tìm kiếm.
      * @return            ResponseEntity chứa {@link CourseSearchRes} với kết quả tìm kiếm.
-     * @see ICourseService#getCourses(int, int, String, CourseSearchReq)
+     * @see ICourseService#getCourses(CourseSearchReq)
      */
     @GetMapping(UrlConstant.GET_COURSES)
-    public ResponseEntity<CourseSearchRes> getCourses(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "created_date") String sort,
-            @RequestBody CourseSearchReq req) {
-
-        CourseSearchRes res = courseService.getCourses(page, pageSize, sort, req);
-        return ResponseEntity.ok(res);
+    public CourseSearchRes getCourses(@RequestBody(required = false) CourseSearchReq courseReq) {
+        return courseService.getCourses(courseReq);
     }
-
 }
 

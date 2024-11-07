@@ -12,4 +12,5 @@ public enum ConfigConstant {
 
     private final String value;
     private final int code;
+
 }

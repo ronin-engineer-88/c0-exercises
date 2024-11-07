@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.io.Serializable;
 import java.util.Date;
 
+
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Data

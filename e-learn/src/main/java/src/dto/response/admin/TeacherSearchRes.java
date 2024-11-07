@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,21 +21,6 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TeacherSearchRes {
-
-    private String username;
-
-    private String name;
-
-    private String status;
-
-    private Date createdDateFrom;
-
-    private Date createdDateTo;
-
-    private String sort;
-
-    private int page;
-
-    private int pageSize;
-
+    private Long totalItems;
+    private List<TeacherResDto> teachers;
 }

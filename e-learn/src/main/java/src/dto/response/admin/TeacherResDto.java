@@ -23,4 +23,6 @@ public class TeacherResDto {
     private String status;
     private String createdDate;
     private String updatedDate;
+
 }
+

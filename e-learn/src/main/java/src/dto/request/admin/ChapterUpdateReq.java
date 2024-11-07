@@ -3,10 +3,7 @@ package src.dto.request.admin;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,17 +19,14 @@ import lombok.experimental.SuperBuilder;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ChapterUpdateReq {
 
-    @NotEmpty(message = "Chapter name is required.")
-    @Size(max = 50, message = "Chapter name must be less than 50 characters.")
+    @Size(max = 50, message = "Chapter name must be less than 255 characters.")
     private String name;
 
-    @Size(max = 255, message = "Description must be less than 255 characters.")
+    @Size(max = 1000, message = "Description must be less than 1000 characters.")
     private String description;
 
-    @NotEmpty(message = "Status is required.")
-    private String status;
+    private Integer status;
 
-    @NotNull(message = "Order is required.")
     @Min(value = 1, message = "Order must be greater than 0.")
     private Integer order;
 }

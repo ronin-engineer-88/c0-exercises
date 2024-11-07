@@ -9,8 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+import src.dto.SortOption;
 
-import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,7 +29,13 @@ public class ChapterSearchReq {
     @Min(value = 1, message = "Course ID must be a positive number.")
     private Long courseId;
 
-    private Date createdDateFrom;
+    private String createdDateFrom; // yyyy-MM-dd HH:mi:ss
 
-    private Date createdDateTo;
+    private String createdDateTo;   // yyyy-MM-dd HH:mi:ss
+
+    private Integer pageIndex;      // >= 0
+
+    private Integer pageSize;       // <= 1
+
+    private List<SortOption> sort;
 }

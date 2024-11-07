@@ -1,4 +1,4 @@
-package src.util;
+package src.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +27,7 @@ public class DateUtils {
             return null;
         }
     }
+
 
     /**
      * Chuyển từ chuỗi sang Date với thời gian.

@@ -36,4 +36,6 @@ public class Address {
 
     @ManyToMany(mappedBy = "address", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<User> users;
+
 }
+

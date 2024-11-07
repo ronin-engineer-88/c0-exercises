@@ -11,6 +11,7 @@ import src.entity.CompositeKey.UserCourseId;
 
 import java.util.Date;
 
+
 @Entity
 @Table(name = "user_course")
 @Getter
@@ -20,7 +21,7 @@ import java.util.Date;
 public class UserCourse {
 
     @EmbeddedId
-    UserCourseId userCourseId;
+    private UserCourseId userCourseId;
 
     @Column(name = "rating")
     private Integer rating;

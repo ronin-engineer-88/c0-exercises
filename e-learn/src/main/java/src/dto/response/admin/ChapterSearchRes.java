@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,20 +20,6 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ChapterSearchRes {
-
-    private String name;
-
-    private String status;
-
-    private Long courseId;
-
-    private Date createdDateFrom;
-
-    private Date createdDateTo;
-
-    private String sort;
-
-    private int page;
-
-    private int pageSize;
+    private Long totalItems;
+    private List<ChapterResponseDto> chapters;
 }

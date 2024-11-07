@@ -1,94 +1,100 @@
 package src.service.impl;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import src.constant.StatusConstant;
 import src.dto.request.admin.AdminLoginReq;
 import src.dto.response.admin.*;
 import src.entity.*;
-import src.repository.UserCourseLessonRepository;
+import src.exception.AdminException.AdminNotFoundException;
+import src.exception.ChapterException.ChapterNotFoundException;
+import src.exception.CourseException.CourseNotFoundException;
+import src.exception.LessonException.LessonNotFoundException;
+import src.exception.LessonException.NoLessonInCourseException;
+import src.exception.NoRecordFoundException;
+import src.exception.TeacherException.TeacherNotFoundException;
+import src.exception.UserException.InvalidPasswordException;
+import src.exception.UserException.UserNotFoundException;
+import src.exception.UserException.UserNotYetEnrolledException;
+import src.repository.*;
 import src.service.IAdminService;
-import src.service.validator.*;
 import src.util.*;
 
 import java.util.List;
 
 @Service
 public class AdminServiceImpl implements IAdminService {
+    private final AdminRepository adminRepository;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
+    private final ChapterRepository chapterRepository;
+    private final LessonRepository lessonRepository;
+    private final TeacherRepository teacherRepository;
+    private final UserCourseRepository userCourseRepository;
     private final UserCourseLessonRepository userCourseLessonRepository;
-    private final AdminValidateService adminValidateService;
-    private final UserValidateService userValidateService;
-    private final CourseValidateService courseValidateService;
-    private final ChapterValidateService chapterValidateService;
-    private final LessonValidatorService lessonValidatorService;
-    private final TeacherValidateService teacherValidateService;
-    private final UserCourseValidateService userCourseValidateService;
-    private final UserCourseLessonValidateService userCourseLessonValidateService;
-    private final RequestValidateService requestValidateService;
-
 
     @Autowired
     public AdminServiceImpl(
-            UserCourseLessonRepository userCourseLessonRepository,
-            AdminValidateService adminValidateService,
-            UserValidateService userValidateService,
-            CourseValidateService courseValidateService,
-            ChapterValidateService chapterValidateService,
-            LessonValidatorService lessonValidatorService,
-            TeacherValidateService teacherValidateService,
-            UserCourseValidateService userCourseValidateService,
-            UserCourseLessonValidateService userCourseLessonValidateService,
-            RequestValidateService requestValidateService
+            AdminRepository adminRepository,
+            UserRepository userRepository,
+            CourseRepository courseRepository,
+            ChapterRepository chapterRepository,
+            LessonRepository lessonRepository,
+            TeacherRepository teacherRepository,
+            UserCourseRepository userCourseRepository,
+            UserCourseLessonRepository userCourseLessonRepository
     ) {
+        this.adminRepository = adminRepository;
+        this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
+        this.chapterRepository = chapterRepository;
+        this.lessonRepository = lessonRepository;
+        this.teacherRepository = teacherRepository;
+        this.userCourseRepository = userCourseRepository;
         this.userCourseLessonRepository = userCourseLessonRepository;
-        this.adminValidateService = adminValidateService;
-        this.userValidateService = userValidateService;
-        this.courseValidateService = courseValidateService;
-        this.chapterValidateService = chapterValidateService;
-        this.lessonValidatorService = lessonValidatorService;
-        this.teacherValidateService = teacherValidateService;
-        this.userCourseValidateService = userCourseValidateService;
-        this.userCourseLessonValidateService = userCourseLessonValidateService;
-        this.requestValidateService = requestValidateService;
-
     }
 
     @Override
     public AdminResponseDto login(AdminLoginReq req) {
+        // Validate admin
+        Admin admin = validateLoginUsername(req.getUsername());
+        // Validate password
+        checkLoginPassword(admin, req.getPassword());
 
-        Admin admin = adminValidateService.validateLoginUsername(req.getUsername());
-        requestValidateService.checkLoginPassword(admin, req.getPassword());
-
-        return AdminUtils.convertToResponseDto(admin);
+        return convertToAdminResponseDto(admin);
     }
 
     @Override
     public UserResponseDto getUserInfo(Long userId) {
+        // Validate user
+        User user = validateUserExist(userId);
 
-        User user = userValidateService.validateUserExist(userId);
-
-        return UserUtils.Admin.convertToUserResponseDto(user);
+        return convertToUserResponseDto(user);
     }
 
     public UserCourseInfoRes getUserCourseInfo(Long userId, Long courseId) {
-
-        User user = userValidateService.validateUserExist(userId);
-        Course course = courseValidateService.validateCourseExist(courseId);
-        UserCourse sc = userCourseValidateService.validateUserEnrolledCourse(user, course);
-        List<UserCourseLesson> userCourseLessonList = userCourseLessonRepository.getListUserCourseLesson(sc);
-
+        // Validate user
+        User user = validateUserExist(userId);
+        // Validate course
+        Course course = validateCourseExist(courseId);
+        // Validate if user has enrolled course
+        UserCourse uc = validateUserEnrolledCourse(user, course);
+        //
+        List<UserCourseLesson> userCourseLessonList = userCourseLessonRepository.getListUserCourseLesson(uc);
+        //
         UserCourseInfoRes res = new UserCourseInfoRes();
-        res.setUser(UserUtils.Admin.convertToUserResponseDto(user));
-        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(course));
+        res.setUser(convertToUserResponseDto(user));
+        res.setCourse(convertToCourseResponseDto(course));
         res.setRate(
-                sc.getRating() != null ? sc.getRating() : null
+                uc.getRating() != null ? uc.getRating() : null
         );
         res.setReview(
-                sc.getReview() != null ? sc.getReview() : null
+                uc.getReview() != null ? uc.getReview() : null
         );
-        res.setCreatedDate(DateUtils.dateTimeToString(sc.getCreatedDate()));
+        res.setCreatedDate(DateUtils.formatDateTime(uc.getCreatedDate()));
         res.setUpdatedDate(
-                sc.getUpdatedDate() != null ? DateUtils.dateTimeToString(sc.getUpdatedDate()) : null
+                uc.getUpdatedDate() != null ? DateUtils.formatDateTime(uc.getUpdatedDate()) : null
         );
         res.setNumLessonProcessing((int) userCourseLessonList.stream()
                 .filter(scl -> StatusConstant.PROCESSING.getValue().equals(scl.getStatus()))
@@ -102,21 +108,32 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public UserCourseLessonInfoRes getUserCourseLessonInfo(Long userId, Long courseId, Long lessonId) {
-
-        User user = userValidateService.validateUserExist(userId);
-        Course course = courseValidateService.validateCourseExist(courseId);
-        UserCourse sc = userCourseValidateService.validateUserEnrolledCourse(user, course);
-        Lesson lesson = lessonValidatorService.validateLessonExist(lessonId);
-        UserCourseLesson scl = userCourseLessonValidateService.validateCourseHasLesson(sc, lesson);
-
+        // Validate user
+        User user = validateUserExist(userId);
+        // Validate course
+        Course course = validateCourseExist(courseId);
+        // Validate if user has enrolled course
+        UserCourse uc = validateUserEnrolledCourse(user, course);
+        // Validate lesson
+        Lesson lesson = validateLessonExist(lessonId);
+        // Validate if course has corresponding lesson
+        checkIfCourseHasLesson(course, lesson);
+        //
+        UserCourseLesson ucl = userCourseLessonRepository.getUserCourseLesson(uc, lesson)
+                .orElseThrow(() -> new NoRecordFoundException(
+                        "Record with user id: " + uc.getUser().getId() +
+                                " and course id: " + uc.getCourse().getId() +
+                                " and lesson id: " + lesson.getId() +
+                                " does not exist!"));
+        //
         UserCourseLessonInfoRes res = new UserCourseLessonInfoRes();
-        res.setUser(UserUtils.Admin.convertToUserResponseDto(user));
-        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(course));
-        res.setLesson(LessonUtils.Admin.convertToLessonResponseDto(lesson));
-        res.setStatus(scl.getStatus());
-        res.setCreatedDate(DateUtils.dateTimeToString(scl.getCreatedDate()));
+        res.setUser(convertToUserResponseDto(user));
+        res.setCourse(convertToCourseResponseDto(course));
+        res.setLesson(convertToLessonResponseDto(lesson));
+        res.setStatus(ucl.getStatus());
+        res.setCreatedDate(DateUtils.formatDateTime(ucl.getCreatedDate()));
         res.setUpdatedDate(
-                scl.getUpdatedDate() != null ? DateUtils.dateTimeToString(scl.getUpdatedDate()) : null
+                ucl.getUpdatedDate() != null ? DateUtils.formatDateTime(ucl.getUpdatedDate()) : null
         );
 
         return res;
@@ -124,10 +141,11 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public TeacherInfoRes getTeacherInfo(Long teacherId) {
-
-        Teacher teacher = teacherValidateService.validateTeacherExist(teacherId);
+        // Validate teacher
+        Teacher teacher = validateTeacherExist(teacherId);
+        //
         TeacherInfoRes res = new TeacherInfoRes();
-        res.setTeacher(TeacherUtils.Admin.convertToResponseDto(teacher));
+        res.setTeacher(convertToTeacherResponseDto(teacher));
         res.setNumCourseTeach(teacher.getCourses().size());
 
         return res;
@@ -135,11 +153,11 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public CourseInfoRes getCourseInfo(Long courseId) {
-
-        Course course = courseValidateService.validateCourseExist(courseId);
-
+        // Validate course
+        Course course = validateCourseExist(courseId);
+        //
         CourseInfoRes res = new CourseInfoRes();
-        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(course));
+        res.setCourse(convertToCourseResponseDto(course));
         res.setNumChapter(course.getChapters().size());
         res.setNumLesson(course.getChapters().stream()
                 .mapToInt(ch -> ch.getLessons().size())
@@ -151,12 +169,12 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public ChapterInfoRes getChapterInfo(Long chapterId) {
-
-        Chapter chapter = chapterValidateService.validateChapterExist(chapterId);
-
+        // Validate chapter
+        Chapter chapter = validateChapterExist(chapterId);
+        //
         ChapterInfoRes res = new ChapterInfoRes();
-        res.setChapter(ChapterUtils.Admin.convertToResponseDto(chapter));
-        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(chapter.getCourse()));
+        res.setChapter(convertToChapterResponseDto(chapter));
+        res.setCourse(convertToCourseResponseDto(chapter.getCourse()));
         res.setNumLesson(chapter.getLessons().size());
 
         return res;
@@ -164,14 +182,13 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public LessonInfoRes getLessonInfo(Long lessonId) {
-
-        Lesson lesson = lessonValidatorService.validateLessonExist(lessonId);
-
+        // Validate lesson
+        Lesson lesson = validateLessonExist(lessonId);
+        //
         LessonInfoRes res = new LessonInfoRes();
-        res.setCourse(CourseUtils.Admin.convertToCourseResponseDto(lesson.getChapter().getCourse()));
-        res.setChapter(ChapterUtils.Admin.convertToResponseDto(lesson.getChapter()));
-        res.setLesson(LessonUtils.Admin.convertToLessonResponseDto(lesson));
-
+        res.setCourse(convertToCourseResponseDto(lesson.getChapter().getCourse()));
+        res.setChapter(convertToChapterResponseDto(lesson.getChapter()));
+        res.setLesson(convertToLessonResponseDto(lesson));
         res.setNumUserProcessing((int) lesson.getUserCourseLessons().stream()
                 .filter(scl -> StatusConstant.PROCESSING.getValue().equals(scl.getStatus()))
                 .count()
@@ -184,5 +201,155 @@ public class AdminServiceImpl implements IAdminService {
         return res;
     }
 
+    private Admin validateLoginUsername(String username) {
+        return adminRepository.findActiveAdminByUsername(username)
+                .orElseThrow(() -> new AdminNotFoundException("Incorrect username!"));
+    }
 
+    private void checkLoginPassword(Admin admin, String password) {
+        if(!admin.getPassword().equals(password))
+            throw new InvalidPasswordException("Incorrect password!");
+    }
+
+    private User validateUserExist(Long userId) {
+        return userRepository.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Not found student with id: " + userId));
+    }
+
+    private Course validateCourseExist(Long courseId) {
+        return courseRepository.getCourseById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException("Not found course with id: " + courseId));
+    }
+
+    private Chapter validateChapterExist(Long chapterId) {
+        return chapterRepository.getChapterById(chapterId)
+                .orElseThrow(() -> new ChapterNotFoundException("Not found chapter with id: " + chapterId));
+    }
+
+    private Lesson validateLessonExist(Long lessonId) {
+        return lessonRepository.getLessonById(lessonId)
+                .orElseThrow(() -> new LessonNotFoundException("Not found lesson with id: " + lessonId));
+    }
+
+    private Teacher validateTeacherExist(Long teacherId) {
+        return teacherRepository.getTeacherById(teacherId)
+                .orElseThrow(() -> new TeacherNotFoundException("Not found teacher with id: " + teacherId));
+    }
+
+    private void checkIfCourseHasLesson(Course course, Lesson lesson) {
+        for(Chapter ch : course.getChapters()) {
+            if(ch.getLessons().contains(lesson))
+                return;
+        }
+        throw new NoLessonInCourseException(
+                "Course with id: " + course.getId() +
+                        " does not have lesson with id: " + lesson.getId());
+    }
+
+    private UserCourse validateUserEnrolledCourse(User user, Course course) {
+        return userCourseRepository.getUserCourse(user, course)
+                .orElseThrow(() -> new UserNotYetEnrolledException("User with id: " + user.getId() +
+                        " has not enrolled course with id: " + course.getId() + " yet!"));
+    }
+
+    private AdminResponseDto convertToAdminResponseDto(Admin admin) {
+
+        AdminResponseDto adminResponseDto = new AdminResponseDto();
+        BeanUtils.copyProperties(admin, adminResponseDto);
+        adminResponseDto.setCreatedDate(DateUtils.formatDateTime(admin.getCreatedDate()));
+        adminResponseDto.setUpdatedDate(
+                admin.getUpdatedDate() != null ? DateUtils.formatDateTime(admin.getUpdatedDate()) : null
+        );
+
+        return adminResponseDto;
+
+    }
+
+    private UserResponseDto convertToUserResponseDto(User user) {
+        UserResponseDto userResponseDto = new UserResponseDto();
+        BeanUtils.copyProperties(user, userResponseDto);
+        userResponseDto.setFullName(convertToFullNameResponseDto(user.getFullName()));
+        userResponseDto.setAddresses(
+                user.getAddress().stream()
+                        .map(this::convertToAddressResponseDto)
+                        .toList()
+        );
+        userResponseDto.setCreatedDate(DateUtils.formatDateTime(user.getCreatedDate()));
+        userResponseDto.setUpdatedDate(
+                user.getUpdatedDate() != null ? DateUtils.formatDateTime(user.getUpdatedDate()) : null
+        );
+        userResponseDto.setNumCourseRegister(user.getUserCourses().size());
+
+        return userResponseDto;
+    }
+
+    private TeacherResDto convertToTeacherResponseDto(Teacher teacher) {
+
+        TeacherResDto teacherResDto = new TeacherResDto();
+        BeanUtils.copyProperties(teacher, teacherResDto);
+        teacherResDto.setCreatedDate(DateUtils.formatDateTime(teacher.getCreatedDate()));
+        teacherResDto.setUpdatedDate(
+                teacher.getUpdatedDate() != null ? DateUtils.formatDateTime(teacher.getUpdatedDate()) : null
+        );
+
+        return teacherResDto;
+    }
+
+    private FullNameResponseDto convertToFullNameResponseDto(FullName fullName) {
+        FullNameResponseDto fullNameResponseDto = new FullNameResponseDto();
+        fullNameResponseDto.setFullName(
+                fullName.getLastName() + " " +
+                        fullName.getMidName() + " " +
+                        fullName.getFirstName());
+
+        return fullNameResponseDto;
+    }
+
+    private AddressResponseDto convertToAddressResponseDto(Address address) {
+
+        AddressResponseDto addressResponseDto = new AddressResponseDto();
+        addressResponseDto.setAddress(
+                address.getAddressDetail() + ", " +
+                        address.getStreet() + ", " +
+                        address.getDistrict() + ", " +
+                        address.getCity() + ", " +
+                        address.getCountry()
+        );
+
+        return addressResponseDto;
+    }
+
+    private CourseResponseDto convertToCourseResponseDto(Course course) {
+        CourseResponseDto courseResponseDto = new CourseResponseDto();
+        BeanUtils.copyProperties(course, courseResponseDto);
+        courseResponseDto.setCreatedDate(DateUtils.formatDateTime(course.getCreatedDate()));
+        courseResponseDto.setUpdatedDate(
+                course.getUpdatedDate() != null ? DateUtils.formatDateTime(course.getUpdatedDate()) : null
+        );
+
+        return courseResponseDto;
+    }
+
+    private ChapterResponseDto convertToChapterResponseDto(Chapter chapter) {
+
+        ChapterResponseDto chapterResponseDto = new ChapterResponseDto();
+        BeanUtils.copyProperties(chapter, chapterResponseDto);
+        chapterResponseDto.setCreatedDate(DateUtils.formatDateTime(chapter.getCreatedDate()));
+        chapterResponseDto.setUpdatedDate(
+                chapter.getUpdatedDate() != null ? DateUtils.formatDateTime(chapter.getUpdatedDate()) : null
+        );
+
+        return chapterResponseDto;
+    }
+
+    private LessonResDto convertToLessonResponseDto(Lesson lesson) {
+        LessonResDto lessonResponseDto = new LessonResDto();
+        BeanUtils.copyProperties(lesson, lessonResponseDto);
+        lessonResponseDto.setCreatedDate(DateUtils.formatDateTime(lesson.getCreatedDate()));
+        lessonResponseDto.setUpdatedDate(
+                lesson.getUpdatedDate() != null ? DateUtils.formatDateTime(lesson.getUpdatedDate()) : null
+        );
+
+        return lessonResponseDto;
+    }
 }

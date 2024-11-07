@@ -17,7 +17,7 @@ public interface UserCourseLessonRepository extends JpaRepository<UserCourseLess
             "FROM UserCourseLesson ucl " +
             "WHERE ucl.userCourse = :uc " +
             "AND ucl.lesson = :lesson")
-    Optional<UserCourseLesson> getStudentCourseLesson(UserCourse uc, Lesson lesson);
+    Optional<UserCourseLesson> getUserCourseLesson(UserCourse uc, Lesson lesson);
 
     @Query("SELECT ucl " +
             "FROM UserCourseLesson ucl " +

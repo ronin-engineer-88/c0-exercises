@@ -1,6 +1,8 @@
 package src.exception.AdminException;
 
-public class AdminNotFoundException extends RuntimeException {
+import src.exception.AppException;
+
+public class AdminNotFoundException extends AppException {
     public AdminNotFoundException(String message) {
         super(message);
     }

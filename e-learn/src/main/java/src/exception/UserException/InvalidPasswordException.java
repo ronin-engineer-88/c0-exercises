@@ -1,6 +1,8 @@
 package src.exception.UserException;
 
-public class InvalidPasswordException extends RuntimeException{
+import src.exception.AppException;
+
+public class InvalidPasswordException extends AppException {
     public InvalidPasswordException(String message) {
         super(message);
     }

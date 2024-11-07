@@ -9,7 +9,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import src.entity.CompositeKey.UserCourseId;
 
-import java.time.LocalDateTime;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "user_course")
@@ -33,11 +34,11 @@ public class UserCourse {
 
     @Column(name = "created_date")
     @CreatedDate
-    private LocalDateTime createdDate;
+    private Date createdDate;
 
     @Column(name = "updated_date")
     @LastModifiedDate
-    private LocalDateTime updatedDate;
+    private Date updatedDate;
 
     @ManyToOne
     @MapsId("userId")

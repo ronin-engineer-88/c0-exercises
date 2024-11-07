@@ -1,6 +1,8 @@
 package src.exception.ChapterException;
 
-public class ChapterNotFoundException extends RuntimeException {
+import src.exception.AppException;
+
+public class ChapterNotFoundException extends AppException {
     public ChapterNotFoundException(String message) {
         super(message);
     }

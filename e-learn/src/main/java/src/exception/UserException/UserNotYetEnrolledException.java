@@ -1,6 +1,8 @@
 package src.exception.UserException;
 
-public class UserNotYetEnrolledException extends RuntimeException {
+import src.exception.AppException;
+
+public class UserNotYetEnrolledException extends AppException {
     public UserNotYetEnrolledException(String message) {
         super(message);
     }

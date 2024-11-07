@@ -15,7 +15,7 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, UserCour
     @Query("SELECT uc FROM UserCourse uc " +
             "WHERE uc.user = :user " +
             "AND uc.course = :course")
-    Optional<UserCourse> getStudentCourse(
+    Optional<UserCourse> getUserCourse(
             @Param("user") User user,
             @Param("course") Course course
     );

@@ -1,6 +1,8 @@
 package src.exception.TeacherException;
 
-public class TeacherNotFoundException extends RuntimeException {
+import src.exception.AppException;
+
+public class TeacherNotFoundException extends AppException {
     public TeacherNotFoundException(String message) {
         super(message);
     }

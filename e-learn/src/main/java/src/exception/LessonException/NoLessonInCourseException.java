@@ -6,4 +6,6 @@ public class NoLessonInCourseException extends AppException {
     public NoLessonInCourseException(String message) {
         super(message);
     }
+
 }
+

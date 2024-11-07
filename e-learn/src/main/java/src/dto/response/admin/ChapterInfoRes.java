@@ -21,30 +21,9 @@ import java.util.Date;
 
 public class ChapterInfoRes {
 
-    private Long courseId;
+    private CourseResponseDto course;
 
-    private String courseName;
-
-    private String courseDescription;
-
-    private String courseStatus;
-
-    private Long chapterId;
-
-    private String chapterName;
-
-    private String chapterDescription;
-
-    private String chapterStatus;
-
-    private Integer chapterOrder;
-
-    private Date createdDate;
-
-    private Date updatedDate;
+    private ChapterResponseDto chapter;
 
     private Integer numLesson;
-
-
-
 }

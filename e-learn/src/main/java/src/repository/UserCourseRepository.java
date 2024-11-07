@@ -19,4 +19,6 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, UserCour
             @Param("user") User user,
             @Param("course") Course course
     );
+
 }
+

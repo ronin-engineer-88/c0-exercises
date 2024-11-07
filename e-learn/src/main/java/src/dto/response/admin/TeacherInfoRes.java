@@ -21,19 +21,7 @@ import java.util.Date;
 
 public class TeacherInfoRes {
 
-    private Long teacherId;
-
-    private String name;
-
-    private String username;
-
-    private String password;
-
-    private String status;
-
-    private Date createdDate;
-
-    private Date updatedDate;
+    private TeacherResDto teacher;
 
     private Integer numCourseTeach;
 

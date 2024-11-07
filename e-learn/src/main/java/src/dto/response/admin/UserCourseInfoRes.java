@@ -19,23 +19,19 @@ import lombok.experimental.SuperBuilder;
 
 public class UserCourseInfoRes {
 
-    private Long userId;
+    private UserResponseDto user;
 
-    private String userName;
+    private CourseResponseDto course;
 
-    private String userStatus;
+    private Integer rate;
 
-    private Integer userAge;
+    private String review;
 
-    private String userUsername;
+    private Integer numLessonProcessing;
 
-    private String userPassword;
+    private Integer numLessonDone;
 
-    private Long courseId;
+    private String createdDate;
 
-    private String courseName;
-
-    private String courseDescription;
-
-    private String courseStatus;
+    private String updatedDate;
 }

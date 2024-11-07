@@ -13,4 +13,6 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
             "FROM Lesson l " +
             "WHERE l.id = :id")
     Optional<Lesson> getLessonById(@Param("id") Long id);
+
 }
+

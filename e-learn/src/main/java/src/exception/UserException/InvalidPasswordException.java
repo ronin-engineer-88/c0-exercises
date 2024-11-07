@@ -6,4 +6,6 @@ public class InvalidPasswordException extends AppException {
     public InvalidPasswordException(String message) {
         super(message);
     }
+
 }
+

@@ -28,3 +28,4 @@ public class AppError {
     private String date;
 
 }
+

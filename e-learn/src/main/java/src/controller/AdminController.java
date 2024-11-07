@@ -2,18 +2,20 @@ package src.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.constant.UrlConstant;
-import src.dto.request.user.UserLoginReq;
+import src.dto.request.admin.AdminLoginReq;
 import src.service.IAdminService;
 
 @RestController
 @RequestMapping(UrlConstant.API_V1 + "/admins")
 public class AdminController {
 
-    // Using field injection
+    // Using constructor injection
     @Autowired
+    @Qualifier("adminServiceImpl")
     private IAdminService adminService;
 
     /**
@@ -23,7 +25,7 @@ public class AdminController {
      * @return Thông tin đăng nhập Admin
      */
     @PostMapping(UrlConstant.LOGIN)
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginReq req) {
+    public ResponseEntity<?> login(@Valid @RequestBody AdminLoginReq req) {
         return ResponseEntity.ok(adminService.login(req));
     }
 

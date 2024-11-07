@@ -9,9 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import src.entity.CompositeKey.UserCourseLessonId;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-
 
 @Entity
 @Table(name = "user_course_lesson")

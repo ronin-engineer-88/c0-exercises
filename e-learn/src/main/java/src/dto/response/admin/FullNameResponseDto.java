@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Date;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -19,14 +17,8 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
-public class CourseInfoRes {
+public class FullNameResponseDto {
 
-    private CourseResponseDto course;
-
-    private Integer numChapter;
-
-    private Integer numLesson;
-
-    private Integer numRegisterUser;
+    private String fullName;
 
 }

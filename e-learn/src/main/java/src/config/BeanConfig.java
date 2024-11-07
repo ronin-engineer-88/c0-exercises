@@ -20,4 +20,5 @@ public class BeanConfig {
 //    public IAdminService adminService() {
 //        return new AdminServiceImpl();
 //    }
+
 }

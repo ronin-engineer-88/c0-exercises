@@ -1,6 +1,8 @@
 package src.exception.UserException;
 
-public class UserNotFoundException extends RuntimeException{
+import src.exception.AppException;
+
+public class UserNotFoundException extends AppException {
     public UserNotFoundException(String message) {
         super(message);
     }

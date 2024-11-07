@@ -1,6 +1,8 @@
 package src.exception.UserException;
 
-public class UserInactiveException extends RuntimeException {
+import src.exception.AppException;
+
+public class UserInactiveException extends AppException {
     public UserInactiveException(String message) {
         super(message);
     }

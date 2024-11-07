@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import src.entity.CompositeKey.UserCourseLessonId;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @Entity
@@ -48,10 +49,10 @@ public class UserCourseLesson {
 
     @Column(name = "created_date")
     @CreatedDate
-    private LocalDateTime createdDate;
+    private Date createdDate;
 
     @Column(name = "updated_date")
     @LastModifiedDate
-    private LocalDateTime updatedDate;
+    private Date updatedDate;
 
 }

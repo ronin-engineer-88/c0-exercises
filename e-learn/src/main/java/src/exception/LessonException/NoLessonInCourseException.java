@@ -1,6 +1,8 @@
 package src.exception.LessonException;
 
-public class NoLessonInCourseException extends RuntimeException{
+import src.exception.AppException;
+
+public class NoLessonInCourseException extends AppException {
     public NoLessonInCourseException(String message) {
         super(message);
     }

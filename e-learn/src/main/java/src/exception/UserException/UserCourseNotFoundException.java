@@ -1,6 +1,8 @@
 package src.exception.UserException;
 
-public class UserCourseNotFoundException extends RuntimeException{
+import src.exception.AppException;
+
+public class UserCourseNotFoundException extends AppException {
     public UserCourseNotFoundException(String message) {
         super(message);
     }

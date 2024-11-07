@@ -1,15 +1,19 @@
 package src.service;
 
 import src.dto.request.user.*;
+import src.dto.response.admin.UserSearchRes;
+import src.dto.response.user.DetailResponse.UserResponseDto;
+import src.dto.response.user.UserEnrollCourseRes;
+import src.dto.response.user.UserRateCourseRes;
 
 public interface IUserService {
-    Object register(UserRegisterReq req);
-    Object login(UserLoginReq req);
-    Object updateUser(Long userId, UserUpdateReq req);
+    UserResponseDto register(UserRegisterReq req);
+    UserResponseDto login(UserLoginReq req);
+    UserResponseDto updateUser(Long userId, UserUpdateReq req);
     void deleteUser(Long userId);
-    Object getUsers(UserSearchReq req);
-    Object enrollCourse(Long userId, Long courseId);
-    Object rateCourse(Long userId, Long courseId, UserRateCourseReq req);
+    UserSearchRes getUsers(UserSearchReq req);
+    UserEnrollCourseRes enrollCourse(Long userId, Long courseId);
+    UserRateCourseRes rateCourse(Long userId, Long courseId, UserRateCourseReq req);
     Object reviewCourse(Long userId, Long courseId, UserReviewCourseReq req);
     Object getCourseInfo(Long courseId);
     Object getRegisterCourse(UserSearchCourseReq req);

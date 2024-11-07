@@ -1,6 +1,8 @@
 package src.exception.CourseException;
 
-public class CourseInactiveException extends RuntimeException {
+import src.exception.AppException;
+
+public class CourseInactiveException extends AppException {
     public CourseInactiveException(String message) {
         super(message);
     }

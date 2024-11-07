@@ -14,86 +14,77 @@ import src.constant.StatusConstant;
 import src.dto.request.user.*;
 import src.dto.response.admin.UserSearchRes;
 import src.dto.response.user.*;
-import src.dto.response.user.DetailResponse.CourseResponseDto;
-import src.dto.response.user.DetailResponse.UserResponseDto;
+import src.dto.response.user.DetailResponse.*;
 import src.entity.*;
 import src.entity.CompositeKey.*;
+import src.exception.AppException;
+import src.exception.CourseException.CourseInactiveException;
+import src.exception.CourseException.CourseNotFoundException;
+import src.exception.LessonException.LessonNotFoundException;
+import src.exception.LessonException.NoLessonInCourseException;
+import src.exception.RequestException;
+import src.exception.UserException.*;
 import src.repository.*;
 import src.service.IUserService;
-import src.service.validator.*;
-import src.util.CourseUtils;
-import src.util.DateUtils;
-import src.util.PageableUtils;
-import src.util.UserUtils;
+import src.util.*;
 
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements IUserService {
-
     private static final Logger log = LoggerFactory.getLogger(IUserService.class);
     private final UserRepository userRepository;
     private final FullNameRepository fullNameRepository;
     private final AddressRepository addressRepository;
+    private final CourseRepository courseRepository;
+    private final LessonRepository lessonRepository;
     private final UserCourseRepository userCourseRepository;
     private final UserCourseLessonRepository userCourseLessonRepository;
-    private final UserValidateService userValidateService;
-    private final CourseValidateService courseValidateService;
-    private final LessonValidatorService lessonValidatorService;
-    private final UserCourseValidateService userCourseValidateService;
-    private final UserCourseLessonValidateService userCourseLessonValidateService;
-    private final RequestValidateService requestValidateService;
 
     @Autowired
     public UserServiceImpl(
             UserRepository userRepository,
             FullNameRepository fullNameRepository,
             AddressRepository addressRepository,
+            CourseRepository courseRepository,
+            LessonRepository lessonRepository,
             UserCourseRepository userCourseRepository,
-            UserCourseLessonRepository userCourseLessonRepository,
-            UserValidateService userValidateService,
-            CourseValidateService courseValidateService,
-            LessonValidatorService lessonValidatorService,
-            UserCourseValidateService userCourseValidateService,
-            UserCourseLessonValidateService userCourseLessonValidateService,
-            RequestValidateService requestValidateService
-
+            UserCourseLessonRepository userCourseLessonRepository
     ) {
         this.userRepository = userRepository;
         this.fullNameRepository = fullNameRepository;
         this.addressRepository = addressRepository;
+        this.courseRepository = courseRepository;
+        this.lessonRepository = lessonRepository;
         this.userCourseRepository = userCourseRepository;
         this.userCourseLessonRepository = userCourseLessonRepository;
-        this.userValidateService = userValidateService;
-        this.courseValidateService = courseValidateService;
-        this.lessonValidatorService = lessonValidatorService;
-        this.userCourseValidateService = userCourseValidateService;
-        this.userCourseLessonValidateService = userCourseLessonValidateService;
-        this.requestValidateService = requestValidateService;
     }
-
 
     @Override
     public UserResponseDto register(UserRegisterReq req) {
-
-        userValidateService.checkRegisterUsername(req.getUsername());
-
+        // Check if username has already existed or not
+        if (userRepository.findUserByUsername(req.getUsername()).isPresent()) {
+            throw new UsernameExistException("Username has already existed!");
+        }
+        //
         User user = new User();
         BeanUtils.copyProperties(req, user);
-        user.setCreatedDate(LocalDateTime.now());
+        user.setCreatedDate(new Date());
         user.setStatus(ConfigConstant.ACTIVE.getValue());
         User savedUser = userRepository.save(user);
-
+        //
         FullName fullName = new FullName();
         BeanUtils.copyProperties(req, fullName);
-        fullName.setCreatedDate(LocalDateTime.now());
+        fullName.setCreatedDate(new Date());
         fullName.setStatus(ConfigConstant.ACTIVE.getValue());
         fullName.setUser(savedUser);
         FullName savedFullname = fullNameRepository.save(fullName);
-
+        //
         List<Address> addresses = new ArrayList<>();
         for(AddressRequest addressRequest : req.getAddressCreateRequests()) {
             Address address = new Address();
@@ -101,67 +92,75 @@ public class UserServiceImpl implements IUserService {
             Address savedAddress = addressRepository.save(address);
             addresses.add(savedAddress);
         }
-
+        //
         savedUser.setAddress(addresses);
         savedUser.setFullName(savedFullname);
         savedUser = userRepository.save(savedUser);
 
-        return UserUtils.convertToResponseDto(savedUser);
+        return convertToUserResponseDto(savedUser);
     }
 
     @Override
     public UserResponseDto login(UserLoginReq req) {
+        // Validate if the username correct and active
+        User user = userRepository.findActiveUserByUsername(req.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("Incorrect username!"));
+        // Validate if the password correct
+        if(!user.getPassword().equals(req.getPassword()))
+            throw new InvalidPasswordException("Incorrect password!");
 
-        User user = userValidateService.validateLoginUsername(req.getUsername());
-
-        requestValidateService.checkLoginPassword(user, req.getPassword());
-
-        return UserUtils.convertToResponseDto(user);
+        return convertToUserResponseDto(user);
     }
 
     @Override
     public UserResponseDto updateUser(Long userId, UserUpdateReq req) {
-
-        User user = userValidateService.validateUserExist(userId);
-        requestValidateService.checkConfigStatusRequest(req.getStatus());
-
-        String newStatus = (req.getStatus() == ConfigConstant.INACTIVE.getCode())
-                            ? ConfigConstant.INACTIVE.getValue() : ConfigConstant.ACTIVE.getValue();
-        if(!newStatus.equals(user.getStatus()))
-            user.setStatus(newStatus);
-
+        // Validate if user existed with given id
+        User user = validateUserExist(userId);
+        // Validate request
+        checkConfigStatusRequest(req.getStatus());
+        //
         FullName fullName = user.getFullName();
         BeanUtils.copyProperties(req, fullName);
-        fullName.setStatus(newStatus);
-        fullName.setUpdatedDate(LocalDateTime.now());
+        //
+        if (req.getStatus() != null) {
+            String newStatus = (req.getStatus() == ConfigConstant.INACTIVE.getCode())
+                    ? ConfigConstant.INACTIVE.getValue()
+                    : ConfigConstant.ACTIVE.getValue();
+            if(!newStatus.equals(user.getStatus())) {
+                user.setStatus(newStatus);
+                fullName.setStatus(newStatus);
+            }
+        }
+        //
+        fullName.setUpdatedDate(new Date());
         FullName savedFullname = fullNameRepository.save(fullName);
-
+        //
         for(int i = 0; i < req.getAddressUpdateRequests().size(); i++) {
             BeanUtils.copyProperties(req.getAddressUpdateRequests().get(i), user.getAddress().get(i));
             addressRepository.save(user.getAddress().get(i));
         }
-
+        //
         BeanUtils.copyProperties(req, user);
         user.setFullName(savedFullname);
-        user.setUpdatedDate(LocalDateTime.now());
+        user.setUpdatedDate(new Date());
         User updateUser = userRepository.save(user);
 
-        return UserUtils.convertToResponseDto(updateUser);
+        return convertToUserResponseDto(updateUser);
     }
 
     @Override
     public void deleteUser(Long userId) {
-
-        User user = userValidateService.validateUserExist(userId);
-        userValidateService.checkActiveUser(user);
-
+        // Validate user existed and user is active
+        User user = validateUserExist(userId);
+        checkActiveUser(user);
+        //
         user.setStatus(ConfigConstant.INACTIVE.getValue());
         user.getFullName().setStatus(ConfigConstant.INACTIVE.getValue());
-        user.setUpdatedDate(LocalDateTime.now());
-        user.getFullName().setUpdatedDate(LocalDateTime.now());
+        user.setUpdatedDate(new Date());
+        user.getFullName().setUpdatedDate(new Date());
         userRepository.save(user);
         fullNameRepository.save(user.getFullName());
-
+        //
         log.info("Soft delete user with id: {}", userId);
     }
 
@@ -184,37 +183,36 @@ public class UserServiceImpl implements IUserService {
         );
         //
         List<UserResponseDto> listUserRes = userPage.getContent().stream()
-                .map(UserUtils::convertToResponseDto)
+                .map(this::convertToUserResponseDto)
                 .toList();
         //
         UserSearchRes res = new UserSearchRes();
         res.setUsers(listUserRes);
         res.setTotalItems(userPage.getTotalElements());
 
-
         return res;
     }
 
     @Override
     public UserEnrollCourseRes enrollCourse(Long userId, Long courseId) {
-
-        User user = userValidateService.validateUserExist(userId);
-        userValidateService.checkActiveUser(user);
-        Course course = courseValidateService.validateCourseExist(courseId);
-        courseValidateService.validateActiveCourse(course);
-        userCourseValidateService.checkIfUserAlreadyEnrolledCourse(user, course);
-
+        // Validate user
+        User user = validateUserExist(userId); checkActiveUser(user);
+        // Validate course
+        Course course = validateCourseExist(courseId); validateActiveCourse(course);
+        // Validate if user has already enrolled course
+        checkIfUserAlreadyEnrolledCourse(user, course);
+        //
         UserCourseId userCourseId = new UserCourseId(userId, courseId);
-
+        //
         UserCourse sc = new UserCourse();
         sc.setUserCourseId(userCourseId);
         sc.setUser(user);
         sc.setCourse(course);
-        sc.setCreatedDate(LocalDateTime.now());
+        sc.setCreatedDate(new Date());
         sc.setStatus(StatusConstant.START.getValue());
-
+        //
         UserCourse savedSc = userCourseRepository.save(sc);
-
+        //
         for(Chapter ch : savedSc.getCourse().getChapters()) {
             for(Lesson l : ch.getLessons()) {
                 UserCourseLesson scl = new UserCourseLesson();
@@ -228,17 +226,17 @@ public class UserServiceImpl implements IUserService {
                 scl.setCourse(course);
                 scl.setLesson(l);
                 scl.setStatus(StatusConstant.START.getValue());
-                scl.setCreatedDate(LocalDateTime.now());
+                scl.setCreatedDate(new Date());
                 userCourseLessonRepository.save(scl);
             }
         }
-
+        //
         UserEnrollCourseRes res = new UserEnrollCourseRes();
         BeanUtils.copyProperties(savedSc, res);
         res.setUserId(userId);
         res.setCourseId(courseId);
-        res.setCreatedDate(DateUtils.dateTimeToString(savedSc.getCreatedDate()));
-
+        res.setCreatedDate(DateUtils.formatDateTime(savedSc.getCreatedDate()));
+        //
         log.info("User with id: {} has successfully enrolled in course with id: {}", userId, courseId);
 
         return res;
@@ -246,15 +244,15 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserRateCourseRes rateCourse(Long userId, Long courseId, UserRateCourseReq req) {
-
-        User user = userValidateService.validateUserExist(userId);
-        userValidateService.checkActiveUser(user);
-        Course course = courseValidateService.validateCourseExist(courseId);
-        courseValidateService.validateActiveCourse(course);
-        UserCourse uc = userCourseValidateService.validateUserEnrolledCourse(user, course);
-
+        // Validate user
+        User user = validateUserExist(userId); checkActiveUser(user);
+        // Validate course
+        Course course = validateCourseExist(courseId); validateActiveCourse(course);
+        // Validate if user has enrolled course
+        UserCourse uc = validateUserEnrolledCourse(user, course);
+        //
         uc.setRating(req.getRate());
-        uc.setUpdatedDate(LocalDateTime.now());
+        uc.setUpdatedDate(new Date());
 
         UserCourse savedSc = userCourseRepository.save(uc);
 
@@ -262,7 +260,7 @@ public class UserServiceImpl implements IUserService {
         res.setUserId(userId);
         res.setCourseId(courseId);
         res.setRate(req.getRate());
-        res.setUpdatedDate(DateUtils.dateTimeToString(savedSc.getUpdatedDate()));
+        res.setUpdatedDate(DateUtils.formatDateTime(savedSc.getUpdatedDate()));
 
         log.info("User with id: {} has rated course with id: {}", userId, courseId);
 
@@ -271,15 +269,15 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserReviewCourseRes reviewCourse(Long userId, Long courseId, UserReviewCourseReq req) {
-
-        User user = userValidateService.validateUserExist(userId);
-        userValidateService.checkActiveUser(user);
-        Course course = courseValidateService.validateCourseExist(courseId);
-        courseValidateService.validateActiveCourse(course);
-        UserCourse uc = userCourseValidateService.validateUserEnrolledCourse(user, course);
+        // Validate user
+        User user = validateUserExist(userId); checkActiveUser(user);
+        // Validate course
+        Course course = validateCourseExist(courseId); validateActiveCourse(course);
+        // Validate if uer has enrolled course
+        UserCourse uc = validateUserEnrolledCourse(user, course);
 
         uc.setReview(req.getReview());
-        uc.setUpdatedDate(LocalDateTime.now());
+        uc.setUpdatedDate(new Date());
 
         UserCourse savedSc = userCourseRepository.save(uc);
 
@@ -287,7 +285,7 @@ public class UserServiceImpl implements IUserService {
         res.setUserId(userId);
         res.setCourseId(courseId);
         res.setReview(req.getReview());
-        res.setUpdatedDate(DateUtils.dateTimeToString(savedSc.getUpdatedDate()));
+        res.setUpdatedDate(DateUtils.formatDateTime(savedSc.getUpdatedDate()));
 
         log.info("User with id: {} has review course with id: {}", userId, courseId);
 
@@ -296,23 +294,23 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public CourseResponseDto getCourseInfo(Long courseId) {
+        // Validate course
+        Course course = validateCourseExist(courseId);
 
-        Course course = courseValidateService.validateCourseExist(courseId);
-
-        return CourseUtils.User.convertToResponseDto(course);
+        return convertToCourseResponseDto(course);
     }
 
     @Override
     public UserSearchCourseRes getRegisterCourse(UserSearchCourseReq req) {
-        //
-        userValidateService.validateUserExist(req.getUserId());
+        // Validate user
+        validateUserExist(req.getUserId());
         //
         req.setPageIndex(req.getPageIndex() != null && req.getPageIndex() >= 0 ? req.getPageIndex() : 0);
         req.setPageSize(req.getPageSize() != null && req.getPageSize() >= 1 ? req.getPageSize() : 10);
         //
         Sort sort = PageableUtils.determineSort(req.getSort());
         Pageable pageable = PageRequest.of(req.getPageIndex(), req.getPageSize(), sort);
-
+        //
         Page<Course> coursePage = userRepository.findRegisterCourses(
                 req.getUserId(),
                 req.getName(),
@@ -325,12 +323,12 @@ public class UserServiceImpl implements IUserService {
                 req.getNumLessons(),
                 pageable
         );
-
+        //
         List<Course> courses = coursePage.getContent();
         List<CourseRegisterSearchResponse> listCourseRegisterRes = courses.stream()
-                .map(course -> CourseUtils.User.convertToResponseDto(req.getUserId(), course))
+                .map(course -> convertToRegisterCourseResponseDto(req.getUserId(), course))
                 .toList();
-
+        //
         UserSearchCourseRes res = new UserSearchCourseRes();
         res.setRegisterCourses(listCourseRegisterRes);
         res.setTotalItems(coursePage.getTotalElements());
@@ -340,24 +338,31 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserStudyRes study(Long userId, Long courseId, Long lessonId, UserStudyReq req) {
-
-        User user = userValidateService.validateUserExist(userId);
-        userValidateService.checkActiveUser(user);
-        Course course = courseValidateService.validateCourseExist(courseId);
-        courseValidateService.validateActiveCourse(course);
-        UserCourse uc = userCourseValidateService.validateUserEnrolledCourse(user, course);
-        Lesson lesson = lessonValidatorService.validateLessonExist(lessonId);
-        lessonValidatorService.validateActiveLesson(lesson);
-        courseValidateService.checkIfCourseHasLesson(course, lesson);
-        requestValidateService.checkStatusRequest(req.getStatus());
-
-        UserCourseLesson ucl = userCourseLessonValidateService.validateRecordExist(uc, lesson);
+        // Validate user
+        User user = validateUserExist(userId); checkActiveUser(user);
+        // Validate course
+        Course course = validateCourseExist(courseId); validateActiveCourse(course);
+        // Validate if user has enrolled course
+        UserCourse uc = validateUserEnrolledCourse(user, course);
+        // Validate lesson
+        Lesson lesson = validateLessonExist(lessonId); validateActiveLesson(lesson);
+        //Validate if course has corresponding lesson
+        checkIfCourseHasLesson(course, lesson);
+        // Validate status request
+        checkStatusRequest(req.getStatus());
+        //
+        UserCourseLesson ucl = userCourseLessonRepository.getStudentCourseLesson(uc, lesson)
+                .orElseThrow(() -> new NoLessonInCourseException(
+                        "Record with user id: " + uc.getUser().getId() +
+                                " and course id: " + uc.getCourse().getId() +
+                                " and lesson id: " + lesson.getId() +
+                                " does not exist!"));
         ucl.setStatus(req.getStatus());
-        ucl.setUpdatedDate(LocalDateTime.now());
-
+        ucl.setUpdatedDate(new Date());
+        //
         UserCourseLesson savedUcl = userCourseLessonRepository.save(ucl);
-
-        if (userCourseLessonValidateService.checkIfCompleteAllLesson(savedUcl.getUserCourse())) {
+        //
+        if (checkIfCompleteAllLesson(savedUcl.getUserCourse())) {
             savedUcl.getUserCourse().setStatus(StatusConstant.DONE.getValue());
             userCourseRepository.save(ucl.getUserCourse());
         }
@@ -366,8 +371,216 @@ public class UserServiceImpl implements IUserService {
             res.setCourseId(courseId);
             res.setLessonId(lessonId);
             res.setStatus(req.getStatus());
-            res.setUpdatedDate(DateUtils.dateTimeToString(savedUcl.getUpdatedDate()));
+            res.setUpdatedDate(DateUtils.formatDateTime(savedUcl.getUpdatedDate()));
 
             return res;
         }
+
+    private User validateUserExist(Long userId) {
+        return userRepository.getStudentById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Not found student with id: " + userId));
+    }
+
+    private void checkActiveUser(User user) {
+        if(user.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new UserInactiveException("User is now unavailable!");
+
+    }
+
+    private Course validateCourseExist(Long courseId) {
+        return courseRepository.getCourseById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException("Not found course with id: " + courseId));
+    }
+
+    private void validateActiveCourse(Course course) {
+        if(course.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new CourseInactiveException("Course is now unavailable!");
+    }
+
+    private Lesson validateLessonExist(Long lessonId) {
+        return lessonRepository.getLessonById(lessonId)
+                .orElseThrow(
+                        () -> new LessonNotFoundException("Not found lesson with id: " + lessonId));
+    }
+
+    public void validateActiveLesson(Lesson lesson) {
+        if(lesson.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new CourseInactiveException("Lesson is now unavailable!");
+    }
+
+    private void checkIfUserAlreadyEnrolledCourse(User user, Course course) {
+        if(userCourseRepository.getUserCourse(user, course).isPresent())
+            throw new UserAlreadyEnrolledException("User with id: " + user.getId() +
+                    " is already enrolled in course with id: " + course.getId());
+
+    }
+
+    private UserCourse validateUserEnrolledCourse(User user, Course course) {
+        return userCourseRepository.getUserCourse(user, course)
+                .orElseThrow(() -> new UserNotYetEnrolledException("User with id: " + user.getId() +
+                        " has not enrolled course with id: " + course.getId() + " yet!"));
+    }
+
+    private void checkIfCourseHasLesson(Course course, Lesson lesson) {
+        for(Chapter ch : course.getChapters()) {
+            if(ch.getLessons().contains(lesson))
+                return;
+        }
+        throw new NoLessonInCourseException(
+                "Course with id: " + course.getId() +
+                        " does not have lesson with id: " + lesson.getId());
+    }
+
+    private boolean checkIfCompleteAllLesson(UserCourse uc) {
+        return userCourseLessonRepository.getListStudentCourseLesson(uc).stream()
+                .allMatch(ucl -> StatusConstant.DONE.getValue().equals(ucl.getStatus()));
+    }
+
+    private void checkConfigStatusRequest(Integer status) {
+        if(status != null
+                && status != ConfigConstant.ACTIVE.getCode()
+                && status != ConfigConstant.INACTIVE.getCode())
+            throw new RequestException("Status must be active or inactive!");
+    }
+
+    private void checkStatusRequest(String status) {
+        if(!Objects.equals(status, StatusConstant.START.getValue())
+                && !Objects.equals(status, StatusConstant.PROCESSING.getValue())
+                && !Objects.equals(status, StatusConstant.DONE.getValue()))
+            throw new RequestException("Status must be START, PROCESSING or DONE!");
+    }
+
+    private UserResponseDto convertToUserResponseDto(User user) {
+
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setFullName(
+                user.getFullName() != null ? convertToFullNameResponseDto(user.getFullName()) : null
+        );
+
+        userResponseDto.setAddresses( user.getAddress() != null ?
+                user.getAddress().stream()
+                        .map(this::convertToAddressResponseDto)
+                        .collect(Collectors.toList()) : null);
+
+        userResponseDto.setUsername(user.getUsername());
+        userResponseDto.setPassword(user.getPassword());
+        userResponseDto.setStatus(user.getStatus());
+        userResponseDto.setCreatedDate(DateUtils.formatDateTime(user.getCreatedDate()));
+        userResponseDto.setUpdatedDate(
+                user.getUpdatedDate() != null ? DateUtils.formatDateTime(user.getUpdatedDate()) : null
+        );
+        userResponseDto.setRegisterCourses(user.getUserCourses().size());
+
+        return userResponseDto;
+    }
+
+    private CourseResponseDto convertToCourseResponseDto(Course course) {
+
+        List<ChapterResponseDto> chapters = course.getChapters().stream()
+                .map(this::convertToChapterResponseDto)
+                .collect(Collectors.toList());
+
+        CourseResponseDto courseDto = new CourseResponseDto(
+                course.getName(),
+                course.getDescription(),
+                course.getStatus(),
+                chapters,
+                convertToTeacherResponseDto(course.getTeacher())
+        );
+        courseDto.setCreatedDate(DateUtils.formatDateTime(course.getCreatedDate()));
+        courseDto.setUpdatedDate(
+                course.getUpdatedDate() != null ? DateUtils.formatDateTime(course.getUpdatedDate()) : null);
+
+        return courseDto;
+    }
+
+    private CourseRegisterSearchResponse convertToRegisterCourseResponseDto(Long userId, Course course) {
+
+        CourseRegisterSearchResponse courseRegisterSearchResponse
+                = new CourseRegisterSearchResponse();
+
+        BeanUtils.copyProperties(course, courseRegisterSearchResponse);
+        courseRegisterSearchResponse.setTeacherName(course.getTeacher().getName());
+        courseRegisterSearchResponse.setCreatedDate(DateUtils.formatDateTime(course.getCreatedDate()));
+        courseRegisterSearchResponse.setUpdatedDate(
+                course.getUpdatedDate() != null ? DateUtils.formatDateTime(course.getUpdatedDate()) : null);
+        courseRegisterSearchResponse.setNumChapters(course.getChapters().size());
+        courseRegisterSearchResponse.setNumLessons(
+                course.getChapters().stream()
+                        .mapToInt(ch -> ch.getLessons().size())
+                        .sum()
+        );
+        courseRegisterSearchResponse.setRate(
+                course.getUserCourses().stream()
+                        .filter(userCourse -> Objects.equals(userCourse.getUser().getId(), userId))
+                        .map(UserCourse::getRating)
+                        .findFirst()
+                        .orElse(null)
+        );
+
+
+        return courseRegisterSearchResponse;
+
+    }
+
+    private ChapterResponseDto convertToChapterResponseDto(Chapter chapter) {
+
+        ChapterResponseDto chapterDto = new ChapterResponseDto();
+        chapterDto.setName(chapter.getName());
+        chapterDto.setDescription(chapter.getDescription());
+        chapterDto.setOrder(chapter.getOrder());
+        List<LessonResponseDto> lessons = chapter.getLessons().stream()
+                .map(this::convertToLessonResponseDto)
+                .collect(Collectors.toList());
+        chapterDto.setLessons(lessons);
+
+
+        return chapterDto;
+    }
+
+    private LessonResponseDto convertToLessonResponseDto(Lesson lesson) {
+
+        LessonResponseDto lessonDto = new LessonResponseDto();
+        lessonDto.setName(lesson.getName());
+        lessonDto.setDescription(lesson.getDescription());
+        lessonDto.setType(lesson.getType());
+        lessonDto.setUrl(lesson.getUrl());
+        lessonDto.setOrder(lesson.getOrder());
+
+        return lessonDto;
+    }
+
+    private TeacherResponseDto convertToTeacherResponseDto(Teacher teacher) {
+
+        TeacherResponseDto teacherDto = new TeacherResponseDto();
+        teacherDto.setName(teacher.getName());
+
+        return teacherDto;
+    }
+
+    private AddressResponseDto convertToAddressResponseDto(Address address) {
+
+        AddressResponseDto addressResponseDto = new AddressResponseDto();
+        addressResponseDto.setAddress(
+                address.getAddressDetail() + ", " +
+                        address.getStreet() + ", " +
+                        address.getDistrict() + ", " +
+                        address.getCity() + ", " +
+                        address.getCountry()
+        );
+
+        return addressResponseDto;
+    }
+
+    private FullNameResponseDto convertToFullNameResponseDto(FullName fullName) {
+
+        FullNameResponseDto fullNameResponseDto = new FullNameResponseDto();
+        fullNameResponseDto.setFullName(
+                fullName.getLastName() + " " +
+                        fullName.getMidName() + " " +
+                        fullName.getFirstName());
+
+        return fullNameResponseDto;
+    }
+
 }

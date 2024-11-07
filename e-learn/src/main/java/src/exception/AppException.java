@@ -1,7 +1,10 @@
 package src.exception;
 
+import lombok.Data;
+
 import java.util.Date;
 
+@Data
 public class AppException extends RuntimeException {
     private String message;
     private Date date;

@@ -1,6 +1,8 @@
 package src.exception.UserException;
 
-public class UsernameExistException extends RuntimeException{
+import src.exception.AppException;
+
+public class UsernameExistException extends AppException {
     public UsernameExistException(String message) {
         super(message);
     }

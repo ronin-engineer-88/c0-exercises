@@ -1,6 +1,8 @@
 package src.exception.UserException;
 
-public class UserAlreadyEnrolledException extends RuntimeException {
+import src.exception.AppException;
+
+public class UserAlreadyEnrolledException extends AppException {
     public UserAlreadyEnrolledException(String message) {
         super(message);
     }

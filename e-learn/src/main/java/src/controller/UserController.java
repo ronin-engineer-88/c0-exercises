@@ -89,8 +89,6 @@ public class UserController {
     @GetMapping(UrlConstant.GET_USERS)
     public ResponseEntity<?> getUsers(@RequestBody(required = false) UserSearchReq req) {
 
-        req = Objects.requireNonNullElse(req, new UserSearchReq());
-
         return ResponseEntity.ok(userService.getUsers(req));
     }
 
@@ -179,8 +177,6 @@ public class UserController {
     @GetMapping(UrlConstant.USER_SEARCH_REGISTERED_COURSE)
     public ResponseEntity<?> searchRegisteredCourse(
             @RequestBody(required = false) UserSearchCourseReq req) {
-
-        req = Objects.requireNonNullElse(req, new UserSearchCourseReq());
 
         return ResponseEntity.ok(userService.getRegisterCourse(req));
     }

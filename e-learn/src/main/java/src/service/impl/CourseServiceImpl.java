@@ -100,6 +100,10 @@ public class CourseServiceImpl implements ICourseService {
             throw new AppException("Course not found with id: " + courseId);
         }
 
+        if (ConfigConstant.INACTIVE.getValue().equalsIgnoreCase(course.getStatus())) {
+            throw new AppException("Course is already inactive");
+        }
+
         course.setStatus(ConfigConstant.INACTIVE.getValue());
         course.setUpdatedDate(new Date());
         courseRepository.save(course);
@@ -138,6 +142,11 @@ public class CourseServiceImpl implements ICourseService {
         res.setCourses(listCourseRes);
         res.setTotalItems(coursePage.getTotalElements());
         return res;
+    }
+
+    @Override
+    public void deleteByStatus(String value) {
+        courseRepository.deleteByStatus(value);
     }
 
     private void assignTeacher(Long teacherId, Course course) {

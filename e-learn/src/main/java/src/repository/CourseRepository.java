@@ -3,13 +3,17 @@ package src.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import src.entity.Course;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import src.entity.Course;
 
 import java.util.Date;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
+
+    @Modifying
+    void deleteByStatus(String status);
 
     @Query("SELECT c FROM Course c WHERE c.id = :id")
     Course getCourseById(@Param("id") Long id);

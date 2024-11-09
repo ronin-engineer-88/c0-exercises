@@ -13,4 +13,5 @@ public interface IChapterService {
     ChapterResponseDto updateChapter(Long courseId, Long chapterId, ChapterUpdateReq req);
     void softDeleteChapter(Long courseId, Long chapterId);
     ChapterSearchRes getChapters(ChapterSearchReq req);
+    void deleteByStatus(String value);
 }

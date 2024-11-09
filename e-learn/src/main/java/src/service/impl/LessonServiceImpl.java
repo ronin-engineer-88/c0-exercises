@@ -121,6 +121,10 @@ public class LessonServiceImpl implements ILessonService {
             throw new AppException("Lesson not found with id: " + lessonId);
         }
 
+        if (ConfigConstant.INACTIVE.getValue().equalsIgnoreCase(lesson.getStatus())) {
+            throw new AppException("Lesson is already inactive");
+        }
+
         lesson.setStatus(ConfigConstant.INACTIVE.getValue());
         lesson.setUpdatedDate(new Date());
         lessonRepository.save(lesson);
@@ -130,6 +134,14 @@ public class LessonServiceImpl implements ILessonService {
 
     @Override
     public LessonSearchRes getLessons(LessonSearchReq req) {
+        if (Objects.nonNull(req.getCourseId()) && !courseRepository.existsById(req.getCourseId())) {
+            throw new AppException("Course not found with id: " + req.getCourseId());
+        }
+
+        if (Objects.nonNull(req.getChapterId()) && !chapterRepository.existsById(req.getChapterId())) {
+            throw new AppException("Chapter not found with id: " + req.getChapterId());
+        }
+
         req.setPageIndex(req.getPageIndex() != null && req.getPageIndex() >= 0 ? req.getPageIndex() : 0);
         req.setPageSize(req.getPageSize() != null && req.getPageSize() >= 1 ? req.getPageSize() : 10);
         //
@@ -158,5 +170,10 @@ public class LessonServiceImpl implements ILessonService {
         res.setLessons(listLessonRes);
         res.setTotalItems(lessonPage.getTotalElements());
         return res;
+    }
+
+    @Override
+    public void deleteByStatus(String value) {
+        lessonRepository.deleteByStatus(value);
     }
 }

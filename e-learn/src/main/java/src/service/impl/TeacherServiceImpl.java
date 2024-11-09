@@ -102,6 +102,10 @@ public class TeacherServiceImpl implements ITeacherService {
             throw new AppException("Teacher not found with id: " + teacherId);
         }
 
+        if (ConfigConstant.INACTIVE.getValue().equalsIgnoreCase(teacher.getStatus())) {
+            throw new AppException("Teacher is already inactive");
+        }
+
         teacher.setStatus(ConfigConstant.INACTIVE.getValue());
         teacher.setUpdatedDate(new Date());
         teacherRepository.save(teacher);
@@ -138,5 +142,10 @@ public class TeacherServiceImpl implements ITeacherService {
         res.setTotalItems(teacherPage.getTotalElements());
 
         return res;
+    }
+
+    @Override
+    public void deleteByStatus(String value) {
+        teacherRepository.deleteByStatus(value);
     }
 }

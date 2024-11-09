@@ -40,9 +40,9 @@ public class UrlConstant {
     //
     public static final String GET_COURSES = "/courses";
     //
-    public static final String GET_CHAPTERS = "/courses/{course_id}/chapters";
+    public static final String GET_CHAPTERS = "/chapters";
     //
-    public static final String GET_LESSONS = "/courses/{course_id}/chapters/{chapter_id}/lessons";
+    public static final String GET_LESSONS = "/lessons";
     //
     public static final String LOGIN = "login";
     //

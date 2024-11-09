@@ -14,7 +14,6 @@ import src.entity.Chapter;
 import src.service.IChapterService;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping(UrlConstant.API_V1)

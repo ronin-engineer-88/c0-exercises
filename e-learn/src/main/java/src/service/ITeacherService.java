@@ -11,4 +11,5 @@ public interface ITeacherService {
     TeacherResDto updateTeacher(Long teacherId, TeacherUpdateReq req);
     void deleteTeacher(Long teacherId);
     TeacherSearchRes getTeachers(TeacherSearchReq req);
+    void deleteByStatus(String value);
 }

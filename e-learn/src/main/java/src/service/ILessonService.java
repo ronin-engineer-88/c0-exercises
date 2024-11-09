@@ -13,4 +13,5 @@ public interface ILessonService {
     LessonResDto updateLesson(Long courseId, Long chapterId, Long lessonId, LessonUpdateReq req);
     void softDeleteLesson(Long courseId, Long chapterId, Long lessonId);
     LessonSearchRes getLessons(LessonSearchReq req);
+    void deleteByStatus(String value);
 }

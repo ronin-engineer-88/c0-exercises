@@ -43,7 +43,5 @@ public class LessonCreateReq {
     @NotNull(message = "Order is required.")
     @Min(value = 1, message = "Order must be greater than or equal to 1.")
     private Integer order;
-
-    private Long chapterId;
 }
 

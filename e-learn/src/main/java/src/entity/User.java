@@ -32,7 +32,7 @@ public class User extends BaseEntity {
     @Transient
     private String email;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private FullName fullName;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

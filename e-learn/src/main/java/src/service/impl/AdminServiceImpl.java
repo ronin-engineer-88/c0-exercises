@@ -1,13 +1,19 @@
 package src.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import src.dto.request.user.UserLoginReq;
 import src.dto.response.admin.*;
 import src.entity.Teacher;
+import src.repository.AdminRepository;
+import src.repository.UserRepository;
 import src.service.IAdminService;
 
 @Service
 public class AdminServiceImpl implements IAdminService {
+
+    @Autowired
+    private AdminRepository adminRepository;
 
     @Override
     public Object login(UserLoginReq req) {
@@ -72,5 +78,8 @@ public class AdminServiceImpl implements IAdminService {
         return res;
     }
 
-
+    @Override
+    public void deleteByStatus(String value) {
+        adminRepository.deleteByStatus(value);
+    }
 }

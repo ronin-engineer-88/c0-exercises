@@ -1,14 +1,23 @@
 package src.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import src.dto.request.user.UserInfoReq;
 import src.dto.request.user.UserLoginReq;
 import src.dto.request.user.UserSearchCourseReq;
 import src.dto.request.user.UserSearchReq;
 import src.dto.response.admin.UserSearchRes;
 import src.dto.response.user.*;
+import src.repository.UserRepository;
 import src.service.IUserService;
 
+@Service
 public class UserServiceImpl implements IUserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public Object register(UserInfoReq req) {
         return req;
@@ -111,5 +120,10 @@ public class UserServiceImpl implements IUserService {
         res.setStatus(status);
 
         return res;
+    }
+
+    @Override
+    public void deleteByStatus(String value) {
+        userRepository.deleteByStatus(value);
     }
 }

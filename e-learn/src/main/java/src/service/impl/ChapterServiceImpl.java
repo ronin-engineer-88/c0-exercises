@@ -104,6 +104,10 @@ public class ChapterServiceImpl implements IChapterService {
     public void softDeleteChapter(Long courseId, Long chapterId) {
         Chapter chapter = validateUtils.validateCourseAndChapter(courseId, chapterId);
 
+        if (ConfigConstant.INACTIVE.getValue().equalsIgnoreCase(chapter.getStatus())) {
+            throw new AppException("Chapter is already inactive");
+        }
+
         chapter.setStatus(ConfigConstant.INACTIVE.getValue());
         chapter.setUpdatedDate(new Date());
 
@@ -112,6 +116,10 @@ public class ChapterServiceImpl implements IChapterService {
 
     @Override
     public ChapterSearchRes getChapters(ChapterSearchReq req) {
+        if (Objects.nonNull(req.getCourseId()) && !courseRepository.existsById(req.getCourseId())) {
+            throw new AppException("Course not found with id: " + req.getCourseId());
+        }
+
         req.setPageIndex(req.getPageIndex() != null && req.getPageIndex() >= 0 ? req.getPageIndex() : 0);
         req.setPageSize(req.getPageSize() != null && req.getPageSize() >= 1 ? req.getPageSize() : 10);
         //
@@ -121,6 +129,7 @@ public class ChapterServiceImpl implements IChapterService {
         Page<Chapter> chapterPage = chapterRepository.findChapter(
                 req.getName(),
                 req.getStatus(),
+                req.getCourseId(),
                 DateUtils.stringToDate(req.getCreatedDateFrom()),
                 DateUtils.stringToDate(req.getCreatedDateTo()),
                 pageable
@@ -139,5 +148,10 @@ public class ChapterServiceImpl implements IChapterService {
         res.setTotalItems(chapterPage.getTotalElements());
 
         return res;
+    }
+
+    @Override
+    public void deleteByStatus(String value) {
+        chapterRepository.deleteByStatus(value);
     }
 }

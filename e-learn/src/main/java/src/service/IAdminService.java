@@ -11,5 +11,5 @@ public interface IAdminService {
     Object getCourseInfo(Long courseId);
     Object getChapterInfo(Long chapterId);
     Object getLessonInfo(Long lessonInfo);
-
+    void deleteByStatus(String value);
 }

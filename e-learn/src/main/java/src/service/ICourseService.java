@@ -11,4 +11,5 @@ public interface ICourseService {
     CourseResponseDto updateCourse(Long courseId, CourseUpdateReq req);
     void softDeleteCourse(Long courseId);
     CourseSearchRes getCourses(CourseSearchReq req);
+    void deleteByStatus(String value);
 }

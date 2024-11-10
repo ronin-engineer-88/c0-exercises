@@ -24,6 +24,10 @@ public class UserStudyRes {
 
     private Long courseId;
 
+    private Long lessonId;
+
     private String status;
+
+    private String updatedDate;
 
 }

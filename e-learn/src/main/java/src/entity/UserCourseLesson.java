@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import src.entity.CompositeKey.UserCourseLessonId;
 
 import java.util.Date;
 
@@ -31,13 +34,23 @@ public class UserCourseLesson {
     @MapsId("lessonId")
     private Lesson lesson;
 
+    @ManyToOne
+    @MapsId("UserCourseId")
+    @JoinColumns({
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            @JoinColumn(name = "course_id", referencedColumnName = "course_id")
+    })
+    private UserCourse userCourse;
+
     @Column(name = "status")
     private String status;
 
     @Column(name = "created_date")
+    @CreatedDate
     private Date createdDate;
 
     @Column(name = "updated_date")
+    @LastModifiedDate
     private Date updatedDate;
 
 }

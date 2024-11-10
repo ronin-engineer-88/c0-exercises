@@ -1,4 +1,4 @@
-package src.dto.response.admin;
+package src.dto.response.user.DetailResponse;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Date;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -19,23 +17,8 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 
-public class UserInfoRes {
-
-    private Long userId;
+public class TeacherResponseDto {
 
     private String name;
 
-    private String status;
-
-    private Integer age;
-
-    private String username;
-
-    private String password;
-
-    private Date createdDate;
-
-    private Date updatedDate;
-
-    private Integer numCourseRegister;
 }

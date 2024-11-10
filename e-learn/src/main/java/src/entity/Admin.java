@@ -24,4 +24,5 @@ public class Admin extends BaseEntity {
 
     @Column(name = "status")
     private String status;
+
 }

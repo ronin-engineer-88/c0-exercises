@@ -1,4 +1,4 @@
-package src.entity;
+package src.entity.CompositeKey;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

@@ -40,4 +40,5 @@ public class Lesson extends BaseEntity {
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
     private List<UserCourseLesson> userCourseLessons;
+
 }

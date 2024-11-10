@@ -8,5 +8,4 @@ public interface FullNameRepository extends JpaRepository<FullName, Long> {
 
     @Modifying
     void deleteByStatus(String status);
-
 }

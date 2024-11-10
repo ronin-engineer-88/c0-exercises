@@ -2,9 +2,7 @@ package src.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtils {
@@ -21,7 +19,7 @@ public class DateUtils {
     public static Date stringToDate(String date) {
         if (date == null || date.trim().isEmpty()) return null;
 
-        SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_FORMAT);
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
         try {
             return formatter.parse(date);
         } catch (ParseException e) {
@@ -30,77 +28,72 @@ public class DateUtils {
         }
     }
 
+
+    /**
+     * Chuyển từ chuỗi sang Date với thời gian.
+     *
+     * @param dateTimeString chuỗi ngày và giờ theo định dạng yyyy-MM-dd HH:mm:ss
+     * @return Date
+     */
+    public static Date stringToDateTime(String dateTimeString) {
+        if (dateTimeString == null || dateTimeString.trim().isEmpty()) return null;
+
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_FORMAT);
+        try {
+            return formatter.parse(dateTimeString);
+        } catch (ParseException e) {
+            System.err.println("Error parsing date and time: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Chuyển từ Date sang chuỗi theo định dạng yyyy-MM-dd.
+     *
+     * @param date Date
+     * @return chuỗi ngày theo định dạng yyyy-MM-dd
+     */
     public static String formatDate(Date date) {
+        if (date == null) return null;
+
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+        return formatter.format(date);
+    }
+
+    /**
+     * Chuyển từ Date sang chuỗi theo định dạng yyyy-MM-dd HH:mm:ss.
+     *
+     * @param date Date
+     * @return chuỗi ngày và giờ theo định dạng yyyy-MM-dd HH:mm:ss
+     */
+    public static String formatDateTime(Date date) {
         if (date == null) return null;
 
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_FORMAT);
         return formatter.format(date);
     }
 
-
     /**
-     * Chuyển từ LocalDate sang chuỗi theo định dạng yyyy-MM-dd.
-     *
-     * @param date LocalDate
-     * @return chuỗi ngày theo định dạng yyyy-MM-dd
-     */
-    public static String dateToString(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-        return date.format(formatter);
-    }
-
-    /**
-     * Chuyển từ chuỗi sang LocalDateTime.
-     *
-     * @param dateTimeString chuỗi ngày và giờ theo định dạng yyyy-MM-dd HH:mm:ss
-     * @return LocalDateTime
-     */
-    public static LocalDateTime stringToDateTime(String dateTimeString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-        return LocalDateTime.parse(dateTimeString, formatter);
-    }
-
-    /**
-     * Chuyển từ LocalDateTime sang chuỗi theo định dạng yyyy-MM-dd HH:mm:ss.
-     *
-     * @param dateTime LocalDateTime
-     * @return chuỗi ngày và giờ theo định dạng yyyy-MM-dd HH:mm:ss
-     */
-    public static String dateTimeToString(LocalDateTime dateTime) {
-        if (dateTime == null) {
-            return null;
-        }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-        return dateTime.format(formatter);
-    }
-
-    /**
-     * Tính khoảng cách giữa hai LocalDate theo ngày.
+     * Tính khoảng cách giữa hai Date theo ngày.
      *
      * @param startDate ngày bắt đầu
      * @param endDate   ngày kết thúc
      * @return số ngày giữa hai ngày
      */
-    public static long daysBetween(LocalDate startDate, LocalDate endDate) {
-       return endDate.toEpochDay() - startDate.toEpochDay();
+    public static long daysBetween(Date startDate, Date endDate) {
+        if (startDate == null || endDate == null) return 0;
+
+        long diffInMillis = endDate.getTime() - startDate.getTime();
+        return diffInMillis / (24 * 60 * 60 * 1000);
     }
 
     /**
-     * Lấy ngày hiện tại dưới dạng LocalDate.
+     * Lấy ngày hiện tại dưới dạng Date.
      *
-     * @return LocalDate của ngày hiện tại
+     * @return Date của ngày hiện tại
      */
-    public static LocalDate getCurrentDate() {
-        return LocalDate.now();
-    }
-
-    /**
-     * Lấy ngày giờ hiện tại dưới dạng LocalDateTime.
-     *
-     * @return LocalDateTime của ngày giờ hiện tại
-     */
-    public static LocalDateTime getCurrentDateTime() {
-        return LocalDateTime.now();
+    public static Date getCurrentDate() {
+        return new Date();
     }
 
     /**
@@ -110,28 +103,36 @@ public class DateUtils {
      * @return true nếu là năm nhuận, ngược lại false
      */
     public static boolean isLeapYear(int year) {
-        return LocalDate.of(year, 1, 1).isLeapYear();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        int daysInYear = calendar.getActualMaximum(Calendar.DAY_OF_YEAR);
+        return daysInYear > 365;
     }
 
     /**
-     * Thêm số ngày vào một LocalDate.
+     * Thêm số ngày vào một Date.
      *
-     * @param date LocalDate ban đầu
+     * @param date Date ban đầu
      * @param days số ngày cần thêm
-     * @return LocalDate sau khi thêm số ngày
+     * @return Date sau khi thêm số ngày
      */
-    public static LocalDate addDays(LocalDate date, long days) {
-        return date.plusDays(days);
+    public static Date addDays(Date date, int days) {
+        if (date == null) return null;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, days);
+        return calendar.getTime();
     }
 
     /**
-     * Trừ số ngày từ một LocalDate.
+     * Trừ số ngày từ một Date.
      *
-     * @param date LocalDate ban đầu
+     * @param date Date ban đầu
      * @param days số ngày cần trừ
-     * @return LocalDate sau khi trừ số ngày
+     * @return Date sau khi trừ số ngày
      */
-    public static LocalDate subtractDays(LocalDate date, long days) {
-        return date.minusDays(days);
+    public static Date subtractDays(Date date, int days) {
+        return addDays(date, -days);
     }
 }

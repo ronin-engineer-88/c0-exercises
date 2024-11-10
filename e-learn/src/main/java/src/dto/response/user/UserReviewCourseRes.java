@@ -25,4 +25,6 @@ public class UserReviewCourseRes {
     private Long courseId;
 
     private String review;
+
+    private String updatedDate;
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import src.entity.CompositeKey.UserCourseId;
 
 import java.util.Date;
 
@@ -20,7 +21,7 @@ import java.util.Date;
 public class UserCourse {
 
     @EmbeddedId
-    private UserCourseId id;
+    private UserCourseId userCourseId;
 
     @Column(name = "rating")
     private Integer rating;

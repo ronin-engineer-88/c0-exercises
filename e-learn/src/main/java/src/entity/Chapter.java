@@ -3,6 +3,7 @@ package src.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,5 +32,6 @@ public class Chapter extends BaseEntity {
     private Course course;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Lesson> lessons;
+    private List<Lesson> lessons = new ArrayList<>();
 }
+

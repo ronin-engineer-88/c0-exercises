@@ -1,7 +1,12 @@
 package src.exception;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.Date;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class AppException extends RuntimeException {
     private String message;
     private Date date;
@@ -12,5 +17,6 @@ public class AppException extends RuntimeException {
         this.message = message;
         date = new Date();
     }
+
 }
 

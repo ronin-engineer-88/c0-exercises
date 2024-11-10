@@ -1,5 +1,6 @@
-package src.entity;
+package src.entity.CompositeKey;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,10 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Embeddable
 public class UserCourseId implements Serializable {
+
+    @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "course_id")
     private Long courseId;
 }

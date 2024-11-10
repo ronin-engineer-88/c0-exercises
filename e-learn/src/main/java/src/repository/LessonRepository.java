@@ -8,15 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import src.entity.Lesson;
 
-import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Date;
 
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
-    @Modifying
-    void deleteByStatus(String status);
-
-    Lesson getLessonById(Long chapterId);
+    @Query("SELECT l FROM Lesson l WHERE l.id = :id")
+    Lesson getLessonById(Long id);
 
     @Query("SELECT l FROM Lesson l " +
             "LEFT JOIN l.chapter c " +
@@ -36,4 +34,8 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
                              @Param("createdDateFrom") Date createdDateFrom,
                              @Param("createdDateTo") Date createdDateTo,
                              Pageable pageable);
+
+    @Modifying
+    void deleteByStatus(String status);
 }
+

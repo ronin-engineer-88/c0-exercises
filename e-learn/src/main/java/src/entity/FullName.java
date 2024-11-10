@@ -30,3 +30,4 @@ public class FullName extends BaseEntity {
     private User user;
 
 }
+

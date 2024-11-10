@@ -1,7 +1,7 @@
 package src.utils;
 
 import org.springframework.data.domain.Sort;
-import src.dto.response.admin.SortOption;
+import src.dto.SortOption;
 
 import java.util.List;
 

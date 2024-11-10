@@ -23,4 +23,6 @@ public class CourseResponseDto {
     private Long teacherId;
     private String createdDate;
     private String updatedDate;
+
 }
+

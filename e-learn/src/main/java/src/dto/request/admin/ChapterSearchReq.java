@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import src.dto.response.admin.SortOption;
+import src.dto.SortOption;
 
 import java.util.List;
 

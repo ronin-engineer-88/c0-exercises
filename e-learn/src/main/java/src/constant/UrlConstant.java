@@ -50,7 +50,7 @@ public class UrlConstant {
     //
     public static final String USER_COURSE_INFO = "users/{user_id}/courses/{course_id}/details";
     //
-    public static final String USER_COURSE_LESSON_INFO = "users/{user_id}/courses/{course_id}/lesson/{lesson_id}details";
+    public static final String USER_COURSE_LESSON_INFO = "users/{user_id}/courses/{course_id}/lessons/{lesson_id}/details";
     //
     public static final String TEACHER_INFO = "teachers/{teacher_id}/details";
     //
@@ -72,9 +72,9 @@ public class UrlConstant {
     //
     public static final String USER_VIEW_COURSE_INFO = "courses/{course_id}";
     //
-    public static final String USER_SEARCH_REGISTERED_COURSE = "/users/{user_id}/courses/registered";
+    public static final String USER_SEARCH_REGISTERED_COURSE = "/users/courses/registered";
     //
-    public static final String USER_STUDY = "/users/{user_id}/courses/{course_id}/study";
+    public static final String USER_STUDY = "/users/{user_id}/courses/{course_id}/lessons/{lesson_id}/study";
     //
     public static final String ADD_TEACHERS = "/teachers";
 }

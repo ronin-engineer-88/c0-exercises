@@ -8,16 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import src.entity.Chapter;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 public interface ChapterRepository extends JpaRepository<Chapter, Long> {
 
-    @Modifying
-    void deleteByStatus(String status);
-
-    Chapter getChapterById(Long chapterId);
+    @Query("SELECT c FROM Chapter c WHERE c.id = :id")
+    Chapter getChapterById(Long id);
 
     List<Chapter> findByCourseIdAndStatus(Long courseId, String status); // Search chapter status 'active'
 
@@ -33,4 +30,7 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
                               @Param("createdDateFrom") Date createdDateFrom,
                               @Param("createdDateTo") Date createdDateTo,
                               Pageable pageable);
+
+    @Modifying
+    void deleteByStatus(String status);
 }

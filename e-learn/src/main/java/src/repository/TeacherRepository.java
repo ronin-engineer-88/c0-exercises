@@ -8,18 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import src.entity.Teacher;
 
+import java.util.Optional;
 import java.util.Date;
-import java.time.LocalDate;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
-    @Modifying
-    void deleteByStatus(String status);
-
     @Query("SELECT t FROM Teacher t WHERE t.id = :id")
     Teacher getTeacherById(@Param("id") Long id);
-
-    boolean existsByUsername(String username);
 
     @Query("SELECT t FROM Teacher t " +
             "WHERE (:username IS NULL OR t.username LIKE CONCAT('%', :username, '%')) " +
@@ -34,4 +29,9 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
                                @Param("createdDateTo") Date createdDateTo,
                                Pageable pageable);
 
+
+    boolean existsByUsername(String username);
+
+    @Modifying
+    void deleteByStatus(String status);
 }

@@ -17,12 +17,7 @@ import src.dto.response.user.*;
 import src.dto.response.user.DetailResponse.*;
 import src.entity.*;
 import src.entity.CompositeKey.*;
-import src.exception.CourseException.CourseInactiveException;
-import src.exception.CourseException.CourseNotFoundException;
-import src.exception.LessonException.LessonNotFoundException;
-import src.exception.LessonException.NoLessonInCourseException;
-import src.exception.RequestException;
-import src.exception.UserException.*;
+import src.exception.AppException;
 import src.repository.*;
 import src.service.IUserService;
 import src.utils.*;
@@ -67,8 +62,8 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResponseDto register(UserRegisterReq req) {
         // Check if username has already existed or not
-        if (userRepository.findUserByUsername(req.getUsername()).isPresent()) {
-            throw new UsernameExistException("Username has already existed!");
+        if (Objects.nonNull(userRepository.findUserByUsername(req.getUsername()))) {
+            throw new AppException("Username has already existed!");
         }
         //
         User user = new User();
@@ -102,11 +97,12 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResponseDto login(UserLoginReq req) {
         // Validate if the username correct and active
-        User user = userRepository.findActiveUserByUsername(req.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("Incorrect username!"));
+        User user = userRepository.findActiveUserByUsername(req.getUsername());
+        if(Objects.isNull(user))
+            throw new AppException("Incorrect username!");
         // Validate if the password correct
         if(!user.getPassword().equals(req.getPassword()))
-            throw new InvalidPasswordException("Incorrect password!");
+            throw new AppException("Incorrect password!");
 
         return convertToUserResponseDto(user);
     }
@@ -114,9 +110,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResponseDto updateUser(Long userId, UserUpdateReq req) {
         // Validate if user existed with given id
-        User user = validateUserExist(userId);
+        User user = userRepository.getUserById(userId);
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + userId);
         // Validate request
-        checkConfigStatusRequest(req.getStatus());
+        if(req.getStatus() != null
+                && req.getStatus() != ConfigConstant.ACTIVE.getCode()
+                && req.getStatus() != ConfigConstant.INACTIVE.getCode())
+            throw new AppException("Status must be active or inactive!");
         //
         FullName fullName = user.getFullName();
         BeanUtils.copyProperties(req, fullName);
@@ -150,8 +151,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void deleteUser(Long userId) {
         // Validate user existed and user is active
-        User user = validateUserExist(userId);
-        checkActiveUser(user);
+        User user = userRepository.getUserById(userId);
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + userId);
+        if(user.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("User is now unavailable!");
         //
         user.setStatus(ConfigConstant.INACTIVE.getValue());
         user.getFullName().setStatus(ConfigConstant.INACTIVE.getValue());
@@ -195,11 +199,21 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserEnrollCourseRes enrollCourse(Long userId, Long courseId) {
         // Validate user
-        User user = validateUserExist(userId); checkActiveUser(user);
+        User user = userRepository.getUserById(userId);
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + userId);
+        if(user.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("User is now unavailable!");
         // Validate course
-        Course course = validateCourseExist(courseId); validateActiveCourse(course);
+        Course course = courseRepository.getCourseById(courseId);
+        if(Objects.isNull(course))
+            throw new AppException("Not found course with id: " + courseId);
+        if(course.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("Course is now unavailable!");
         // Validate if user has already enrolled course
-        checkIfUserAlreadyEnrolledCourse(user, course);
+        if(Objects.isNull(userCourseRepository.getUserCourse(user, course)))
+            throw new AppException("User with id: " + user.getId() +
+                    " is already enrolled in course with id: " + course.getId());
         //
         UserCourseId userCourseId = new UserCourseId(userId, courseId);
         //
@@ -244,11 +258,22 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserRateCourseRes rateCourse(Long userId, Long courseId, UserRateCourseReq req) {
         // Validate user
-        User user = validateUserExist(userId); checkActiveUser(user);
+        User user = userRepository.getUserById(userId);
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + userId);
+        if(user.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("User is now unavailable!");
         // Validate course
-        Course course = validateCourseExist(courseId); validateActiveCourse(course);
+        Course course = courseRepository.getCourseById(courseId);
+        if(Objects.isNull(course))
+            throw new AppException("Not found course with id: " + courseId);
+        if(course.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("Course is now unavailable!");
         // Validate if user has enrolled course
-        UserCourse uc = validateUserEnrolledCourse(user, course);
+        UserCourse uc = userCourseRepository.getUserCourse(user, course);
+        if(Objects.isNull(uc))
+            throw new AppException("User with id: " + user.getId() +
+                    " has not enrolled course with id: " + course.getId() + " yet!");
         //
         uc.setRating(req.getRate());
         uc.setUpdatedDate(new Date());
@@ -269,11 +294,22 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserReviewCourseRes reviewCourse(Long userId, Long courseId, UserReviewCourseReq req) {
         // Validate user
-        User user = validateUserExist(userId); checkActiveUser(user);
+        User user = userRepository.getUserById(userId);
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + userId);
+        if(user.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("User is now unavailable!");
         // Validate course
-        Course course = validateCourseExist(courseId); validateActiveCourse(course);
+        Course course = courseRepository.getCourseById(courseId);
+        if(Objects.isNull(course))
+            throw new AppException("Not found course with id: " + courseId);
+        if(course.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("Course is now unavailable!");
         // Validate if uer has enrolled course
-        UserCourse uc = validateUserEnrolledCourse(user, course);
+        UserCourse uc = userCourseRepository.getUserCourse(user, course);
+        if(Objects.isNull(uc))
+            throw new AppException("User with id: " + user.getId() +
+                    " has not enrolled course with id: " + course.getId() + " yet!");
 
         uc.setReview(req.getReview());
         uc.setUpdatedDate(new Date());
@@ -294,7 +330,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public CourseResponseDto getCourseInfo(Long courseId) {
         // Validate course
-        Course course = validateCourseExist(courseId);
+        Course course = courseRepository.getCourseById(courseId);
+        if(Objects.isNull(course))
+            throw new AppException("Not found course with id: " + courseId);
 
         return convertToCourseResponseDto(course);
     }
@@ -302,7 +340,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserSearchCourseRes getRegisterCourse(UserSearchCourseReq req) {
         // Validate user
-        validateUserExist(req.getUserId());
+        User user = userRepository.getUserById(req.getUserId());
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + req.getUserId());
         //
         req.setPageIndex(req.getPageIndex() != null && req.getPageIndex() >= 0 ? req.getPageIndex() : 0);
         req.setPageSize(req.getPageSize() != null && req.getPageSize() >= 1 ? req.getPageSize() : 10);
@@ -338,125 +378,79 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserStudyRes study(Long userId, Long courseId, Long lessonId, UserStudyReq req) {
         // Validate user
-        User user = validateUserExist(userId); checkActiveUser(user);
+        User user = userRepository.getUserById(userId);
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + userId);
+        if(user.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("User is now unavailable!");
         // Validate course
-        Course course = validateCourseExist(courseId); validateActiveCourse(course);
+        Course course = courseRepository.getCourseById(courseId);
+        if(Objects.isNull(course))
+            throw new AppException("Not found course with id: " + courseId);
+        if(course.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("Course is now unavailable!");
         // Validate if user has enrolled course
-        UserCourse uc = validateUserEnrolledCourse(user, course);
+        UserCourse uc = userCourseRepository.getUserCourse(user, course);
+        if(Objects.isNull(uc))
+            throw new AppException("User with id: " + user.getId() +
+                    " has not enrolled course with id: " + course.getId() + " yet!");
         // Validate lesson
-        Lesson lesson = validateLessonExist(lessonId); validateActiveLesson(lesson);
+        Lesson lesson = lessonRepository.getLessonById(lessonId);
+        if(Objects.isNull(lesson))
+            throw new AppException("Not found lesson with id: " + lessonId);
+        if(lesson.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
+            throw new AppException("Lesson is now unavailable!");
         //Validate if course has corresponding lesson
-        checkIfCourseHasLesson(course, lesson);
+        boolean lessonExistsInCourse = course.getChapters().stream()
+                .anyMatch(chapter -> chapter.getLessons().contains(lesson));
+
+        if (!lessonExistsInCourse) {
+            throw new AppException(
+                    "Course with id: " + course.getId() +
+                            " does not have lesson with id: " + lesson.getId());
+        }
         // Validate status request
-        checkStatusRequest(req.getStatus());
+        if(!Objects.equals(req.getStatus(), StatusConstant.START.getValue())
+                && !Objects.equals(req.getStatus(), StatusConstant.PROCESSING.getValue())
+                && !Objects.equals(req.getStatus(), StatusConstant.DONE.getValue()))
+            throw new AppException("Status must be START, PROCESSING or DONE!");
         //
-        UserCourseLesson ucl = userCourseLessonRepository.getUserCourseLesson(uc, lesson)
-                .orElseThrow(() -> new NoLessonInCourseException(
-                        "Record with user id: " + uc.getUser().getId() +
-                                " and course id: " + uc.getCourse().getId() +
-                                " and lesson id: " + lesson.getId() +
-                                " does not exist!"));
+        UserCourseLesson ucl = userCourseLessonRepository.getUserCourseLesson(uc, lesson);
+        if(Objects.isNull(ucl))
+            throw new AppException(
+                    "Record with user id: " + uc.getUser().getId() +
+                            " and course id: " + uc.getCourse().getId() +
+                            " and lesson id: " + lesson.getId() +
+                            " does not exist!");
         ucl.setStatus(req.getStatus());
         ucl.setUpdatedDate(new Date());
         //
         UserCourseLesson savedUcl = userCourseLessonRepository.save(ucl);
         //
-        if (checkIfCompleteAllLesson(savedUcl.getUserCourse())
+        if(userCourseLessonRepository.getListUserCourseLesson(savedUcl.getUserCourse()).stream()
+                .allMatch(userCourseLesson -> StatusConstant.DONE.getValue().equals(userCourseLesson.getStatus()))
                 && !savedUcl.getUserCourse().getStatus().equals(StatusConstant.DONE.getValue())) {
             savedUcl.getUserCourse().setStatus(StatusConstant.DONE.getValue());
             userCourseRepository.save(ucl.getUserCourse());
-        } else if (checkIfUserProcessingCourse(savedUcl.getUserCourse())
+        } else if (!userCourseLessonRepository.getListUserCourseLesson(savedUcl.getUserCourse()).stream()
+                .allMatch(userCourseLesson -> StatusConstant.START.getValue().equals(userCourseLesson.getStatus()))
                 && !savedUcl.getUserCourse().getStatus().equals(StatusConstant.PROCESSING.getValue())) {
             savedUcl.getUserCourse().setStatus(StatusConstant.PROCESSING.getValue());
             userCourseRepository.save(ucl.getUserCourse());
         }
-            UserStudyRes res = new UserStudyRes();
-            res.setUserId(userId);
-            res.setCourseId(courseId);
-            res.setLessonId(lessonId);
-            res.setStatus(req.getStatus());
-            res.setUpdatedDate(DateUtils.formatDateTime(savedUcl.getUpdatedDate()));
+        UserStudyRes res = new UserStudyRes();
+        res.setUserId(userId);
+        res.setCourseId(courseId);
+        res.setLessonId(lessonId);
+        res.setStatus(req.getStatus());
+        res.setUpdatedDate(DateUtils.formatDateTime(savedUcl.getUpdatedDate()));
 
-            return res;
-        }
-
-    private User validateUserExist(Long userId) {
-        return userRepository.getUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Not found student with id: " + userId));
+        return res;
     }
 
-    private void checkActiveUser(User user) {
-        if(user.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
-            throw new UserInactiveException("User is now unavailable!");
-
-    }
-
-    private Course validateCourseExist(Long courseId) {
-        return courseRepository.getCourseById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException("Not found course with id: " + courseId));
-    }
-
-    private void validateActiveCourse(Course course) {
-        if(course.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
-            throw new CourseInactiveException("Course is now unavailable!");
-    }
-
-    private Lesson validateLessonExist(Long lessonId) {
-        return lessonRepository.getLessonById(lessonId)
-                .orElseThrow(
-                        () -> new LessonNotFoundException("Not found lesson with id: " + lessonId));
-    }
-
-    public void validateActiveLesson(Lesson lesson) {
-        if(lesson.getStatus().equals(ConfigConstant.INACTIVE.getValue()))
-            throw new CourseInactiveException("Lesson is now unavailable!");
-    }
-
-    private void checkIfUserAlreadyEnrolledCourse(User user, Course course) {
-        if(userCourseRepository.getUserCourse(user, course).isPresent())
-            throw new UserAlreadyEnrolledException("User with id: " + user.getId() +
-                    " is already enrolled in course with id: " + course.getId());
-
-    }
-
-    private UserCourse validateUserEnrolledCourse(User user, Course course) {
-        return userCourseRepository.getUserCourse(user, course)
-                .orElseThrow(() -> new UserNotYetEnrolledException("User with id: " + user.getId() +
-                        " has not enrolled course with id: " + course.getId() + " yet!"));
-    }
-
-    private void checkIfCourseHasLesson(Course course, Lesson lesson) {
-        for(Chapter ch : course.getChapters()) {
-            if(ch.getLessons().contains(lesson))
-                return;
-        }
-        throw new NoLessonInCourseException(
-                "Course with id: " + course.getId() +
-                        " does not have lesson with id: " + lesson.getId());
-    }
-
-    private boolean checkIfCompleteAllLesson(UserCourse uc) {
-        return userCourseLessonRepository.getListUserCourseLesson(uc).stream()
-                .allMatch(ucl -> StatusConstant.DONE.getValue().equals(ucl.getStatus()));
-    }
-
-    private boolean checkIfUserProcessingCourse(UserCourse uc) {
-        return !userCourseLessonRepository.getListUserCourseLesson(uc).stream()
-                .allMatch(ucl -> StatusConstant.START.getValue().equals(ucl.getStatus()));
-    }
-
-    private void checkConfigStatusRequest(Integer status) {
-        if(status != null
-                && status != ConfigConstant.ACTIVE.getCode()
-                && status != ConfigConstant.INACTIVE.getCode())
-            throw new RequestException("Status must be active or inactive!");
-    }
-
-    private void checkStatusRequest(String status) {
-        if(!Objects.equals(status, StatusConstant.START.getValue())
-                && !Objects.equals(status, StatusConstant.PROCESSING.getValue())
-                && !Objects.equals(status, StatusConstant.DONE.getValue()))
-            throw new RequestException("Status must be START, PROCESSING or DONE!");
+    @Override
+    public void deleteByStatus(String value) {
+        userRepository.deleteByStatus(value);
     }
 
     private UserResponseDto convertToUserResponseDto(User user) {
@@ -591,5 +585,4 @@ public class UserServiceImpl implements IUserService {
 
         return fullNameResponseDto;
     }
-
 }

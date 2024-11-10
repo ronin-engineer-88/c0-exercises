@@ -2,6 +2,7 @@ package src.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Page;
@@ -9,7 +10,6 @@ import src.entity.Course;
 import src.entity.User;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -17,18 +17,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u " +
             "FROM User u " +
             "WHERE u.username = :username")
-    Optional<User> findUserByUsername(@Param("username") String username);
+    User findUserByUsername(@Param("username") String username);
 
     @Query("SELECT u " +
             "FROM User u " +
             "WHERE u.username = :username " +
             "AND u.status = 'active'")
-    Optional<User> findActiveUserByUsername(@Param("username") String username);
+    User findActiveUserByUsername(@Param("username") String username);
 
     @Query("SELECT u " +
             "FROM User u " +
             "WHERE u.id = :id")
-    Optional<User> getUserById(@Param("id") Long id);
+    User getUserById(@Param("id") Long id);
 
     @Query("SELECT u FROM User u " +
             "WHERE (:name IS NULL OR u.fullName.firstName LIKE CONCAT('%', :name, '%') " +
@@ -89,5 +89,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("numLessons") Integer numLessons,
             Pageable pageable
     );
+
+    @Modifying
+    void deleteByStatus(String status);
 
 }

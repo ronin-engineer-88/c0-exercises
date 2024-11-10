@@ -18,4 +18,5 @@ public interface IUserService {
     Object getCourseInfo(Long courseId);
     Object getRegisterCourse(UserSearchCourseReq req);
     Object study(Long userId, Long courseId, Long lessonId, UserStudyReq req);
+    void deleteByStatus(String value);
 }

@@ -7,21 +7,13 @@ import src.constant.StatusConstant;
 import src.dto.request.admin.AdminLoginReq;
 import src.dto.response.admin.*;
 import src.entity.*;
-import src.exception.AdminException.AdminNotFoundException;
-import src.exception.ChapterException.ChapterNotFoundException;
-import src.exception.CourseException.CourseNotFoundException;
-import src.exception.LessonException.LessonNotFoundException;
-import src.exception.LessonException.NoLessonInCourseException;
-import src.exception.NoRecordFoundException;
-import src.exception.TeacherException.TeacherNotFoundException;
-import src.exception.UserException.InvalidPasswordException;
-import src.exception.UserException.UserNotFoundException;
-import src.exception.UserException.UserNotYetEnrolledException;
+import src.exception.AppException;
 import src.repository.*;
 import src.service.IAdminService;
 import src.utils.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AdminServiceImpl implements IAdminService {
@@ -55,12 +47,16 @@ public class AdminServiceImpl implements IAdminService {
         this.userCourseLessonRepository = userCourseLessonRepository;
     }
 
+
     @Override
     public AdminResponseDto login(AdminLoginReq req) {
         // Validate admin
-        Admin admin = validateLoginUsername(req.getUsername());
+        Admin admin = adminRepository.findActiveAdminByUsername(req.getUsername());
+        if(Objects.isNull(admin))
+            throw new AppException("Incorrect username!");
         // Validate password
-        checkLoginPassword(admin, req.getPassword());
+        if(!admin.getPassword().equals(req.getPassword()))
+            throw new AppException("Incorrect password!");
 
         return convertToAdminResponseDto(admin);
     }
@@ -68,18 +64,27 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public UserResponseDto getUserInfo(Long userId) {
         // Validate user
-        User user = validateUserExist(userId);
+        User user = userRepository.getUserById(userId);
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + userId);
 
         return convertToUserResponseDto(user);
     }
 
     public UserCourseInfoRes getUserCourseInfo(Long userId, Long courseId) {
         // Validate user
-        User user = validateUserExist(userId);
+        User user = userRepository.getUserById(userId);
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + userId);
         // Validate course
-        Course course = validateCourseExist(courseId);
+        Course course = courseRepository.getCourseById(courseId);
+        if(Objects.isNull(course))
+            throw new AppException("Not found course with id: " + courseId);
         // Validate if user has enrolled course
-        UserCourse uc = validateUserEnrolledCourse(user, course);
+        UserCourse uc = userCourseRepository.getUserCourse(user, course);
+        if(Objects.isNull(uc))
+            throw new AppException("User with id: " + user.getId() +
+                    " has not enrolled course with id: " + course.getId() + " yet!");
         //
         List<UserCourseLesson> userCourseLessonList = userCourseLessonRepository.getListUserCourseLesson(uc);
         //
@@ -109,22 +114,39 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public UserCourseLessonInfoRes getUserCourseLessonInfo(Long userId, Long courseId, Long lessonId) {
         // Validate user
-        User user = validateUserExist(userId);
+        User user = userRepository.getUserById(userId);
+        if(Objects.isNull(user))
+            throw new AppException("Not found student with id: " + userId);
         // Validate course
-        Course course = validateCourseExist(courseId);
+        Course course = courseRepository.getCourseById(courseId);
+        if(Objects.isNull(course))
+            throw new AppException("Not found course with id: " + courseId);
         // Validate if user has enrolled course
-        UserCourse uc = validateUserEnrolledCourse(user, course);
+        UserCourse uc = userCourseRepository.getUserCourse(user, course);
+        if(Objects.isNull(uc))
+            throw new AppException("User with id: " + user.getId() +
+                    " has not enrolled course with id: " + course.getId() + " yet!");
         // Validate lesson
-        Lesson lesson = validateLessonExist(lessonId);
+        Lesson lesson = lessonRepository.getLessonById(lessonId);
+        if(Objects.isNull(lesson))
+            throw new AppException("Not found lesson with id: " + lessonId);
         // Validate if course has corresponding lesson
-        checkIfCourseHasLesson(course, lesson);
+        boolean lessonExistsInCourse = course.getChapters().stream()
+                .anyMatch(chapter -> chapter.getLessons().contains(lesson));
+
+        if (!lessonExistsInCourse) {
+            throw new AppException(
+                    "Course with id: " + course.getId() +
+                            " does not have lesson with id: " + lesson.getId());
+        }
         //
-        UserCourseLesson ucl = userCourseLessonRepository.getUserCourseLesson(uc, lesson)
-                .orElseThrow(() -> new NoRecordFoundException(
-                        "Record with user id: " + uc.getUser().getId() +
-                                " and course id: " + uc.getCourse().getId() +
-                                " and lesson id: " + lesson.getId() +
-                                " does not exist!"));
+        UserCourseLesson ucl = userCourseLessonRepository.getUserCourseLesson(uc, lesson);
+        if(Objects.isNull(ucl))
+            throw new AppException(
+                    "Record with user id: " + uc.getUser().getId() +
+                            " and course id: " + uc.getCourse().getId() +
+                            " and lesson id: " + lesson.getId() +
+                            " does not exist!");
         //
         UserCourseLessonInfoRes res = new UserCourseLessonInfoRes();
         res.setUser(convertToUserResponseDto(user));
@@ -142,7 +164,9 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public TeacherInfoRes getTeacherInfo(Long teacherId) {
         // Validate teacher
-        Teacher teacher = validateTeacherExist(teacherId);
+        Teacher teacher = teacherRepository.getTeacherById(teacherId);
+        if(Objects.isNull(teacher))
+            throw new AppException("Not found teacher with id: " + teacherId);
         //
         TeacherInfoRes res = new TeacherInfoRes();
         res.setTeacher(convertToTeacherResponseDto(teacher));
@@ -154,7 +178,9 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public CourseInfoRes getCourseInfo(Long courseId) {
         // Validate course
-        Course course = validateCourseExist(courseId);
+        Course course = courseRepository.getCourseById(courseId);
+        if(Objects.isNull(course))
+            throw new AppException("Not found course with id: " + courseId);
         //
         CourseInfoRes res = new CourseInfoRes();
         res.setCourse(convertToCourseResponseDto(course));
@@ -170,7 +196,9 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public ChapterInfoRes getChapterInfo(Long chapterId) {
         // Validate chapter
-        Chapter chapter = validateChapterExist(chapterId);
+        Chapter chapter = chapterRepository.getChapterById(chapterId);
+        if(Objects.isNull(chapter))
+            throw new AppException("Not found chapter with id: " + chapterId);
         //
         ChapterInfoRes res = new ChapterInfoRes();
         res.setChapter(convertToChapterResponseDto(chapter));
@@ -183,7 +211,9 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public LessonInfoRes getLessonInfo(Long lessonId) {
         // Validate lesson
-        Lesson lesson = validateLessonExist(lessonId);
+        Lesson lesson = lessonRepository.getLessonById(lessonId);
+        if(Objects.isNull(lesson))
+            throw new AppException("Not found lesson with id: " + lessonId);
         //
         LessonInfoRes res = new LessonInfoRes();
         res.setCourse(convertToCourseResponseDto(lesson.getChapter().getCourse()));
@@ -201,55 +231,9 @@ public class AdminServiceImpl implements IAdminService {
         return res;
     }
 
-    private Admin validateLoginUsername(String username) {
-        return adminRepository.findActiveAdminByUsername(username)
-                .orElseThrow(() -> new AdminNotFoundException("Incorrect username!"));
-    }
-
-    private void checkLoginPassword(Admin admin, String password) {
-        if(!admin.getPassword().equals(password))
-            throw new InvalidPasswordException("Incorrect password!");
-    }
-
-    private User validateUserExist(Long userId) {
-        return userRepository.getUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Not found student with id: " + userId));
-    }
-
-    private Course validateCourseExist(Long courseId) {
-        return courseRepository.getCourseById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException("Not found course with id: " + courseId));
-    }
-
-    private Chapter validateChapterExist(Long chapterId) {
-        return chapterRepository.getChapterById(chapterId)
-                .orElseThrow(() -> new ChapterNotFoundException("Not found chapter with id: " + chapterId));
-    }
-
-    private Lesson validateLessonExist(Long lessonId) {
-        return lessonRepository.getLessonById(lessonId)
-                .orElseThrow(() -> new LessonNotFoundException("Not found lesson with id: " + lessonId));
-    }
-
-    private Teacher validateTeacherExist(Long teacherId) {
-        return teacherRepository.getTeacherById(teacherId)
-                .orElseThrow(() -> new TeacherNotFoundException("Not found teacher with id: " + teacherId));
-    }
-
-    private void checkIfCourseHasLesson(Course course, Lesson lesson) {
-        for(Chapter ch : course.getChapters()) {
-            if(ch.getLessons().contains(lesson))
-                return;
-        }
-        throw new NoLessonInCourseException(
-                "Course with id: " + course.getId() +
-                        " does not have lesson with id: " + lesson.getId());
-    }
-
-    private UserCourse validateUserEnrolledCourse(User user, Course course) {
-        return userCourseRepository.getUserCourse(user, course)
-                .orElseThrow(() -> new UserNotYetEnrolledException("User with id: " + user.getId() +
-                        " has not enrolled course with id: " + course.getId() + " yet!"));
+    @Override
+    public void deleteByStatus(String value) {
+        adminRepository.deleteByStatus(value);
     }
 
     private AdminResponseDto convertToAdminResponseDto(Admin admin) {

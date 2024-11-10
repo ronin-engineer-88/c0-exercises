@@ -2,14 +2,12 @@ package src.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import src.entity.CompositeKey.UserCourseLessonId;
 import src.entity.Lesson;
 import src.entity.UserCourse;
 import src.entity.UserCourseLesson;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserCourseLessonRepository extends JpaRepository<UserCourseLesson, UserCourseLessonId> {
 
@@ -17,7 +15,7 @@ public interface UserCourseLessonRepository extends JpaRepository<UserCourseLess
             "FROM UserCourseLesson ucl " +
             "WHERE ucl.userCourse = :uc " +
             "AND ucl.lesson = :lesson")
-    Optional<UserCourseLesson> getUserCourseLesson(UserCourse uc, Lesson lesson);
+    UserCourseLesson getUserCourseLesson(UserCourse uc, Lesson lesson);
 
     @Query("SELECT ucl " +
             "FROM UserCourseLesson ucl " +

@@ -1,5 +1,6 @@
 package src.service.impl;
 
+import org.springframework.stereotype.Service;
 import src.dto.request.user.UserInfoReq;
 import src.dto.request.user.UserLoginReq;
 import src.dto.request.user.UserSearchCourseReq;
@@ -7,7 +8,7 @@ import src.dto.request.user.UserSearchReq;
 import src.dto.response.admin.UserSearchRes;
 import src.dto.response.user.*;
 import src.service.IUserService;
-
+@Service
 public class UserServiceImpl implements IUserService {
     @Override
     public Object register(UserInfoReq req) {

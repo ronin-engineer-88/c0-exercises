@@ -9,8 +9,6 @@ import org.springframework.data.repository.query.Param;
 import src.entity.Course;
 
 import java.util.Date;
-import java.util.Optional;
-
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 

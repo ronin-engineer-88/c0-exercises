@@ -9,14 +9,13 @@ import src.entity.Course;
 import src.entity.User;
 import src.entity.UserCourse;
 
-import java.util.Optional;
 
 public interface UserCourseRepository extends JpaRepository<UserCourse, UserCourseId> {
 
     @Query("SELECT uc FROM UserCourse uc " +
             "WHERE uc.user = :user " +
             "AND uc.course = :course")
-    Optional<UserCourse> getUserCourse(
+    UserCourse getUserCourse(
             @Param("user") User user,
             @Param("course") Course course
     );

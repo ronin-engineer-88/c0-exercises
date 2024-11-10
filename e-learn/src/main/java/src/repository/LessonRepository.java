@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import src.entity.Lesson;
 
-import java.util.Optional;
 import java.util.Date;
 
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
